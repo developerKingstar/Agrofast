@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Agrofast solutions</string>
+    <string name="nav_open">Open menu</string>
+    <string name="nav_close">Close menu</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+<string name="hello_blank_fragment">Hello blank fragment</string>
+<string name="item_description_quality_details"><![CDATA[Item Description & Quality Details]]></string>
+</resources>

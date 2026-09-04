@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AGROFASTASOLUTIONS">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity android:name=".LauncherActivity" android:exported="true" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Login" android:exported="false" />
+        <activity android:name=".Signup" android:exported="false" />
+        <activity android:name=".DashBoardActivity" android:exported="false" />
+        <activity android:name=".BuyActivity" android:exported="false" />
+        <activity android:name=".ListingsActivity" android:exported="false" />
+        <activity android:name=".ListingDetailsActivity" android:exported="false" />
+        <activity android:name=".MakeOfferActivity" android:exported="false" />
+        <activity android:name=".OfferStatusActivity" android:exported="false" />
+        <activity android:name=".SellActivity" android:exported="false"/>
+        <activity android:name=".Selecting_listing" android:exported="false"/>
+        <activity android:name=".Show_order" android:exported="false"/>
+        <activity android:name=".Selected_crp_demand" android:exported="false"/>
+        <activity android:name=".Edit_and_suspend" android:exported="false"/>
+        <activity android:name=".CustomizeActivity" android:exported="false"/>
+
+    </application>
+
+</manifest>

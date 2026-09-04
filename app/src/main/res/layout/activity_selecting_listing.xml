@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4F6F4"
+    android:padding="16dp"
+    tools:context=".Selecting_listing">
+
+    <!-- 1. Header Title Text -->
+    <TextView
+        android:id="@+id/tvHeaderTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Create New Listing"
+        android:textColor="#1B4D3E"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- ScrollView to ensure the form fits on smaller screens -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvHeaderTitle"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:scrollbars="none">
+
+        <!-- 2. Vertical LinearLayout containing 5 Input Fields & Submit Button -->
+        <LinearLayout
+            android:id="@+id/formLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Input 1: Crop Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCropName"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Crop type"
+                app:boxStrokeColor="#2E7D32"
+                app:hintTextColor="@color/black"
+                app:startIconDrawable="@android:drawable/ic_menu_gallery"
+                app:startIconTint="#8D6E63">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCropName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    android:textColor="#1B4D3E"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Input 2: Quantity Available -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilQuantity"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Available Quantity (kg)"
+                app:boxStrokeColor="#2E7D32"
+                app:hintTextColor="@color/black"
+                app:startIconDrawable="@android:drawable/ic_menu_sort_by_size"
+                app:startIconTint="#8D6E63">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="#1B4D3E"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Input 3: Unit Price -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPrice"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Unit Price (Tsh/Kg)"
+                app:boxStrokeColor="#2E7D32"
+                app:hintTextColor="@color/black"
+                app:startIconDrawable="@android:drawable/ic_menu_info_details"
+                app:startIconTint="#8D6E63">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="#1B4D3E"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Input 4: Harvest / Pick Location -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilLocation"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:hint="Pickup Location/Region"
+                app:boxStrokeColor="#2E7D32"
+                app:hintTextColor="@color/black"
+                app:startIconDrawable="@android:drawable/ic_menu_mylocation"
+                app:startIconTint="#8D6E63">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress"
+                    android:textColor="#1B4D3E"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Input 5: Description / Notes -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDescription"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:hint="@string/item_description_quality_details"
+                app:boxStrokeColor="#2E7D32"
+                app:hintTextColor="@color/black"
+                app:startIconDrawable="@android:drawable/ic_menu_edit"
+                app:startIconTint="#8D6E63">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine"
+                    android:minLines="3"
+                    android:textColor="#1B4D3E"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Upload Picture Widget Frame -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardUploadPicture"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp">
+
+                    <!-- Dashed / Framed Container for Image Preview or Icon -->
+                    <FrameLayout
+                        android:id="@+id/frameImageContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#F5F7F5">
+
+                        <!-- Default Placeholder View (Shown before image selection) -->
+                        <LinearLayout
+                            android:id="@+id/layoutUploadPlaceholder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/imgUploadIcon"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@android:drawable/ic_menu_camera"
+                                app:tint="#8D6E63" />
+
+                            <TextView
+                                android:id="@+id/tvUploadTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="Upload Crop Photo"
+                                android:textColor="#1B4D3E"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvUploadSubtext"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Tap to browse from gallery or camera"
+                                android:textColor="#757575"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <!-- Preview ImageView (Initially hidden; displays image after selection) -->
+                        <ImageView
+                            android:id="@+id/imgPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                    </FrameLayout>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 3. Submit Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmitListing"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="16dp"
+                android:text="Publish Listing"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="#1B4D3E"
+                app:cornerRadius="12dp"
+                app:rippleColor="#8D6E63" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOrder"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="0dp"
+                android:text="View listing"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="#1B4D3E"
+                app:cornerRadius="20dp"
+                app:rippleColor="#8D6E63" />
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
