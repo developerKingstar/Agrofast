@@ -3,6 +3,19 @@
     <string name="nav_open">Open menu</string>
     <string name="nav_close">Close menu</string>
 
+    <string name="buy_crops">How to buy crops</string>
+    <string name="back">Back</string>
+    <string name="BuyCrops">How to buy crops</string>
+    <string name="user_guide">User guide</string>
+    <string name="sell_harvest">How to sell your harvest</string>
+    <string name="nuisance">Understanding the nuisance fee</string>
+    <string name="ratings">Ratings and reviews</string>
+    <string name="emoji_buy">🛒</string>
+    <string name="emoji_sell">🌱</string>
+    <string name="emoji_fee">✋</string>
+    <string name="emoji_ratings">⭐</string>
+    <string name="back_">Back</string>
+
 <!-- TODO: Remove or change this placeholder text -->
 <string name="hello_blank_fragment">Hello blank fragment</string>
 <string name="item_description_quality_details"><![CDATA[Item Description & Quality Details]]></string>

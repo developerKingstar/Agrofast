@@ -78,16 +78,16 @@ public class Selecting_listing extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(Selecting_listing.this, "Request sent successfully", Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(Selecting_listing.this, Show_order.class);
-                startActivity(intent);
+                //Intent intent = new Intent(Selecting_listing.this, Show_order.class);
+                //startActivity(intent);
             }
         });
 
 
 
-        materialButton = findViewById(R.id.btnOrder);
+        materialButton = findViewById(R.id.btnvw_Listing);
         materialButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Selecting_listing.this, Show_order.class);
+            Intent intent = new Intent(Selecting_listing.this, MySell_Listings.class);
             startActivity(intent);
         });
     }

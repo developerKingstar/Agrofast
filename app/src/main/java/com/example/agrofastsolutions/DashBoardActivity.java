@@ -59,17 +59,22 @@ public class DashBoardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        setupDrawerItem(R.id.nav_sell,      () -> { Intent intent = new Intent(this, SellActivity.class);
+        setupDrawerItem(R.id.nav_sell,      () -> { Intent intent = new Intent(this, Selecting_listing.class);
             startActivity(intent);
         });
 
         setupDrawerItem(R.id.nav_market,    () -> { /* TODO: open MarketActivity */ });
-        setupDrawerItem(R.id.nav_myspace,   () -> { /* TODO: open MySpaceActivity */ });
+
+        setupDrawerItem(R.id.nav_myspace,   () -> { Intent intent = new Intent(this, Show_order.class);
+        startActivity(intent);});
+
         setupDrawerItem(R.id.nav_customize, () -> { Intent intent = new Intent(this, CustomizeActivity.class);
             startActivity(intent);
         });
 
-        setupDrawerItem(R.id.nav_guide,     () -> { /* TODO: open UserGuideActivity */ });
+        setupDrawerItem(R.id.nav_guide,     () -> { Intent intent = new Intent(this, UserGuideActivity.class);
+        startActivity(intent);});
+
         setupDrawerItem(R.id.nav_logout,    () -> {  Intent intent = new Intent(this, Login.class);
             startActivity(intent);
         });

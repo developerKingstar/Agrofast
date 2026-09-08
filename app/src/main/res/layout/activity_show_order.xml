@@ -9,38 +9,70 @@
     android:padding="16dp"
     tools:context=".Show_order">
 
-    <!-- 1. Horizontal Header Bar -->
+    <!-- 1. Horizontal Header Bar - now 4 tabs: Received, Orders, Completed, Declined -->
     <LinearLayout
         android:id="@+id/tabHeaderLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:orientation="horizontal"
-        android:weightSum="2">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPendingOrders"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="1"
-            android:text="Pending Orders"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:cornerRadius="10dp" />
+        android:weightSum="4">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnReceivingOffers"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="6dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:text="Receiving Offers"
+            android:paddingHorizontal="0dp"
+            android:text="Received"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPendingOrders"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="0dp"
+            android:text="Orders"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCompletedOrders"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="0dp"
+            android:text="Completed"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDeclinedOrders"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="0dp"
+            android:text="Declined"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
 
@@ -59,7 +91,6 @@
         app:hintTextColor="#2E7D32"
         app:startIconDrawable="@android:drawable/ic_menu_search"
         app:startIconTint="#8D6E63">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearchOrders"
             android:layout_width="match_parent"
