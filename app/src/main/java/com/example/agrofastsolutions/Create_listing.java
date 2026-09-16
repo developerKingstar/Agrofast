@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,7 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 
+import com.example.agrofastsolutions.repository.AgrofastRepository;
+import com.example.agrofastsolutions.util.DevLogger;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,30 +33,31 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Selecting_listing extends AppCompatActivity {
+public class Create_listing extends AppCompatActivity {
 
-    private MaterialButton materialButton,submitbtn;
+    private MaterialButton btnViewListings, btnSubmit;
     private LinearLayout layoutUploadPlaceholder;
     private ImageView imgCropPicture;
     private CardView cardUploadPicture;
 
-    private Uri cameraImageUri;
+    private TextInputEditText etCropName, etQuantity, etPrice, etLocation, etDescription;
 
-    // 1. Gallery Launcher - handles image/* (PNG, JPEG, WEBP, HEIC, etc.)
+    private Uri cameraImageUri;
+    private AgrofastRepository repository;
+
     private final ActivityResultLauncher<String> galleryLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri != null) {
                     displaySelectedImage(uri);
-                    Toast.makeText(this, "Image selected from Gallery", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
                 }
             });
 
-    // 2. Camera Launcher
     private final ActivityResultLauncher<Uri> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
                 if (success && cameraImageUri != null) {
                     displaySelectedImage(cameraImageUri);
-                    Toast.makeText(this, "Photo captured successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Photo captured", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -62,40 +65,96 @@ public class Selecting_listing extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_selecting_listing);
+        setContentView(R.layout.activity_create_listing);
 
+        repository = new AgrofastRepository(this);
 
         layoutUploadPlaceholder = findViewById(R.id.layoutUploadPlaceholder);
-        imgCropPicture = findViewById(R.id.imgPreview);
-        cardUploadPicture = findViewById(R.id.cardUploadPicture);
-
-        // Attach click listener to the outer card container so tapping anywhere opens selector
+        imgCropPicture          = findViewById(R.id.imgPreview);
+        cardUploadPicture       = findViewById(R.id.cardUploadPicture);
         cardUploadPicture.setOnClickListener(v -> showImagePickerDialog());
 
-        submitbtn = findViewById(R.id.btnSubmitListing);
-        submitbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(Selecting_listing.this, "Request sent successfully", Toast.LENGTH_SHORT).show();
+        etCropName    = findViewById(R.id.etCropName);
+        etQuantity    = findViewById(R.id.etQuantity);
+        etPrice       = findViewById(R.id.etPrice);
+        etLocation    = findViewById(R.id.etLocation);
+        etDescription = findViewById(R.id.etDescription);
 
-                //Intent intent = new Intent(Selecting_listing.this, Show_order.class);
-                //startActivity(intent);
-            }
-        });
+        btnSubmit       = findViewById(R.id.btnSubmitListing);
+        btnViewListings = findViewById(R.id.btnvw_Listing);
 
+        btnSubmit.setOnClickListener(v -> attemptSubmitListing());
 
-
-        materialButton = findViewById(R.id.btnvw_Listing);
-        materialButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Selecting_listing.this, MySell_Listings.class);
-            startActivity(intent);
+        btnViewListings.setOnClickListener(v -> {
+            startActivity(new Intent(Create_listing.this, MySell_Listings.class));
         });
     }
 
-    /**
-     * Decodes and displays any image URI format (PNG, JPG, WEBP, etc.),
-     * hides the placeholder, and turns on ImageView visibility.
-     */
+    private void attemptSubmitListing() {
+        String crop      = textOf(etCropName);
+        String qtyStr    = textOf(etQuantity);
+        String priceStr  = textOf(etPrice);
+        String location  = textOf(etLocation);
+
+        if (crop.isEmpty()) { etCropName.setError("Please enter a crop name"); etCropName.requestFocus(); return; }
+        if (qtyStr.isEmpty()) { etQuantity.setError("Please enter a quantity"); etQuantity.requestFocus(); return; }
+
+        double quantity;
+        try { quantity = Double.parseDouble(qtyStr); }
+        catch (NumberFormatException e) { etQuantity.setError("Please enter a valid number"); return; }
+        if (quantity <= 0) { etQuantity.setError("Quantity must be greater than 0"); return; }
+
+        if (priceStr.isEmpty()) { etPrice.setError("Please enter a price"); etPrice.requestFocus(); return; }
+
+        double price;
+        try { price = Double.parseDouble(priceStr); }
+        catch (NumberFormatException e) { etPrice.setError("Please enter a valid number"); return; }
+        if (price <= 0) { etPrice.setError("Price must be greater than 0"); return; }
+
+        if (location.isEmpty()) { etLocation.setError("Please enter a location"); etLocation.requestFocus(); return; }
+
+        showLoading(true);
+
+        repository.createListing(crop, quantity, price, location,
+                new AgrofastRepository.DataCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        showLoading(false);
+                        Toast.makeText(Create_listing.this,
+                                "Listing published!", Toast.LENGTH_SHORT).show();
+                        clearForm();
+                        startActivity(new Intent(Create_listing.this, MySell_Listings.class));
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        showLoading(false);
+
+                        DevLogger.logError("Create_listing submit", error, null);
+
+                        Toast.makeText(Create_listing.this,
+                                DevLogger.toUserMessage(error), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private String textOf(TextInputEditText et) {
+        return et.getText() == null ? "" : et.getText().toString().trim();
+    }
+
+    private void clearForm() {
+        etCropName.setText("");
+        etQuantity.setText("");
+        etPrice.setText("");
+        etLocation.setText("");
+        etDescription.setText("");
+    }
+
+    private void showLoading(boolean loading) {
+        btnSubmit.setEnabled(!loading);
+        btnSubmit.setText(loading ? "Publishing..." : "Publish Listing");
+    }
+
     private void displaySelectedImage(Uri uri) {
         try {
             Bitmap bitmap;
@@ -105,14 +164,11 @@ public class Selecting_listing extends AppCompatActivity {
             } else {
                 InputStream inputStream = getContentResolver().openInputStream(uri);
                 bitmap = BitmapFactory.decodeStream(inputStream);
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+                if (inputStream != null) inputStream.close();
             }
 
             if (bitmap != null) {
                 imgCropPicture.setImageBitmap(bitmap);
-                // Toggle visibility: Hide placeholder, show image view
                 layoutUploadPlaceholder.setVisibility(View.GONE);
                 imgCropPicture.setVisibility(View.VISIBLE);
             } else {
@@ -120,40 +176,33 @@ public class Selecting_listing extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+            DevLogger.logError("Create_listing image decode", e.getMessage(), e);
+            Toast.makeText(this, "Could not load that image.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void showImagePickerDialog() {
         String[] options = {"Choose from Gallery", "Take a Photo"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select Crop Photo");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                openGallery();
-            } else if (which == 1) {
-                openCamera();
-            }
-        });
-        builder.show();
+        new AlertDialog.Builder(this)
+                .setTitle("Select Crop Photo")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) openGallery();
+                    else if (which == 1) openCamera();
+                })
+                .show();
     }
 
-    private void openGallery() {
-        galleryLauncher.launch("image/*");
-    }
+    private void openGallery() { galleryLauncher.launch("image/*"); }
 
     private void openCamera() {
         try {
             File photoFile = createImageFile();
             cameraImageUri = FileProvider.getUriForFile(
-                    this,
-                    getPackageName() + ".fileprovider",
-                    photoFile
-            );
+                    this, getPackageName() + ".fileprovider", photoFile);
             cameraLauncher.launch(cameraImageUri);
         } catch (IOException e) {
-            Toast.makeText(this, "Error creating file for camera", Toast.LENGTH_SHORT).show();
+            DevLogger.logError("Create_listing camera", e.getMessage(), e);
+            Toast.makeText(this, "Could not open camera.", Toast.LENGTH_SHORT).show();
         }
     }
 

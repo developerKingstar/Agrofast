@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#F4F6F4"
     android:padding="16dp"
-    tools:context=".Selecting_listing">
+    tools:context=".Create_listing">
 
     <!-- 1. Header Title Text -->
     <TextView
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:text="Create New Listing"
+        android:text="Sell space"
         android:textColor="#1B4D3E"
         android:textSize="22sp"
         android:textStyle="bold" />
@@ -35,6 +35,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ListingHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="Create New Listing"
+                android:textColor="#1B4D3E"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
 
             <!-- Input 1: Crop Name -->
             <com.google.android.material.textfield.TextInputLayout

@@ -60,25 +60,25 @@
             android:textColor="#777777"
             android:textSize="15sp"/>
 
-        <!-- Username Label -->
+        <!-- Email Label -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:text="Username"
+            android:text="Email Address"
             android:textColor="#333333"
             android:textSize="15sp"
             android:textStyle="bold"/>
 
-        <!-- Username -->
+        <!-- Email -->
         <EditText
-            android:id="@+id/edtUsername"
+            android:id="@+id/edtEmail"
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="7dp"
             android:background="@drawable/input_background"
-            android:hint="Enter your username"
-            android:inputType="text"
+            android:hint="Enter your email"
+            android:inputType="textEmailAddress"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textColor="#111111"
@@ -186,19 +186,6 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <!-- DEV ONLY: remove once real login/database auth is wired up -->
-        <TextView
-            android:id="@+id/txtDevSkip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:text="Skip login (dev)"
-            android:textColor="#999999"
-            android:textSize="13sp"
-            android:padding="8dp"
-            android:clickable="true"
-            android:focusable="true"/>
 
     </LinearLayout>
 

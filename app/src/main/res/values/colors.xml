@@ -3,8 +3,11 @@
     <color name="agrofast_white">#FFFFFF</color>
     <color name="agrofast_black">#000000</color>
     <color name="agrofast_green">#1F6F43</color>
+    <color name="agrofast_dark_green">#1B4D3E</color>
     <color name="agrofast_brown">#8A5A2B</color>
     <color name="agrofast_orange">#F9A825</color>
     <color name="black">#000000</color>
+    <color name="agrofast_yellowish_green">#96cc00</color>
+
 
 </resources>

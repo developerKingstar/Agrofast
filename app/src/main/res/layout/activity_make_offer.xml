@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="26dp">
+    android:padding="26dp"
+    android:background="#F6F8F4">
 
     <ImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:src="@android:drawable/ic_input_add"
-        android:tint="#2E7D32">
-    </ImageView>
+        app:tint="#2E7D32" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,36 +21,71 @@
         android:layout_marginTop="18dp"
         android:text="Make Your Offer"
         android:textColor="#1B5E20"
-        android:textSize="25dp"
-        android:textStyle="bold"/>
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <!-- Shows which crop + seller -->
+    <TextView
+        android:id="@+id/tvOfferContext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="—"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+    <!-- Quantity -->
     <EditText
         android:id="@+id/etOfferQuantity"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:layout_marginTop="45dp"
-        android:hint="Quantity Required (Kg)"
+        android:layout_marginTop="35dp"
+        android:hint="Quantity Required (kg)"
         android:inputType="numberDecimal"
-        android:padding="15dp"/>
+        android:padding="15dp"
+        android:autofillHints="none" />
 
+    <!-- Offered price -->
     <EditText
         android:id="@+id/etOfferPrice"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="15dp"
-        android:hint="Your Offered Price (Optional)"
+        android:hint="Your Offered Price per kg (Optional)"
         android:inputType="numberDecimal"
-        android:padding="15dp" />
+        android:padding="15dp"
+        android:autofillHints="none" />
 
+    <!-- Send button -->
     <Button
         android:id="@+id/btnSendOffer"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="#2E7D32"
         android:text="SEND OFFER"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:textSize="20dp"/>
+        android:textSize="16sp" />
 
+    <!-- Progress indicator -->
+    <ProgressBar
+        android:id="@+id/progressBarOffer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+
+    <!-- Cancel button -->
+    <Button
+        android:id="@+id/btnCancelOffer"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#EEEEEE"
+        android:text="Cancel"
+        android:textColor="#444441" />
 
 </LinearLayout>

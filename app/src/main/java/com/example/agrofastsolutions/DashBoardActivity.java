@@ -7,13 +7,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.example.agrofastsolutions.auth.SupabaseAuthManager;
 
 import java.util.Calendar;
 
@@ -59,7 +62,7 @@ public class DashBoardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        setupDrawerItem(R.id.nav_sell,      () -> { Intent intent = new Intent(this, Selecting_listing.class);
+        setupDrawerItem(R.id.nav_sell,      () -> { Intent intent = new Intent(this, Create_listing.class);
             startActivity(intent);
         });
 
@@ -75,9 +78,7 @@ public class DashBoardActivity extends AppCompatActivity {
         setupDrawerItem(R.id.nav_guide,     () -> { Intent intent = new Intent(this, UserGuideActivity.class);
         startActivity(intent);});
 
-        setupDrawerItem(R.id.nav_logout,    () -> {  Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
-        });
+        setupDrawerItem(R.id.nav_logout, this::performLogout);
 
         findViewById(R.id.iv_profile).setOnClickListener(v ->
                 new ProfileBottomSheet().show(getSupportFragmentManager(), "profile_sheet"));
@@ -95,6 +96,40 @@ public class DashBoardActivity extends AppCompatActivity {
         // TODO: set up rv_news (RecyclerView) with a NewsAdapter once the news API call is wired up
     }
 
+    // ==========================================
+    // LOGOUT — confirm, clear session, clear back stack
+    // ==========================================
+    private void performLogout() {
+        new AlertDialog.Builder(this)
+                .setTitle("Log out?")
+                .setMessage("You'll need to log in again to use Agrofast.")
+                .setPositiveButton("Log out", (dialog, which) -> {
+
+                    // 1. Clear Supabase session (user_id, tokens, etc.)
+                    SupabaseAuthManager auth = new SupabaseAuthManager(this);
+                    auth.logout();
+
+                    // 2. Also clear any legacy keys from the old signup system
+                    //    (safe to leave out later, but good hygiene now)
+                    getSharedPreferences("agrofast_prefs", MODE_PRIVATE)
+                            .edit()
+                            .remove("is_logged_in")
+                            .remove("first_name")
+                            .remove("email")
+                            .remove("phone")
+                            .remove("location")
+                            .apply();
+
+                    // 3. Navigate to Log in AND wipe the entire back stack
+                    Intent intent = new Intent(this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finishAffinity();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
     private void setupDrawerItem(int viewId, Runnable action) {
         View row = findViewById(viewId);
         row.setOnClickListener(v -> {
@@ -120,7 +155,7 @@ public class DashBoardActivity extends AppCompatActivity {
         String fullOrFirstName = prefs.getString(KEY_FIRST_NAME, null);
 
         if (fullOrFirstName == null || fullOrFirstName.trim().isEmpty()) {
-            return "Kingstar";
+            return "user";
         }
 
         // In case a full name ever gets saved by mistake, only use the first word.

@@ -9,26 +9,41 @@
     android:padding="16dp"
     tools:context=".Show_order">
 
-    <!-- 1. Horizontal Header Bar - now 4 tabs: Received, Orders, Completed, Declined -->
+    <!-- 1. Horizontal Header Bar - NOW 5 TABS: Sent, Received, Orders, Completed, Declined -->
     <LinearLayout
         android:id="@+id/tabHeaderLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:orientation="horizontal"
-        android:weightSum="4">
+        android:weightSum="5">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSentOffers"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="0dp"
+            android:text="Sent"
+            android:textColor="#FFFFFF"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            app:cornerRadius="10dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnReceivingOffers"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="46dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Received"
             android:textColor="#FFFFFF"
-            android:textSize="10sp"
+            android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
 
@@ -37,13 +52,13 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="46dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Orders"
             android:textColor="#FFFFFF"
-            android:textSize="10sp"
+            android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
 
@@ -52,13 +67,13 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="46dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Completed"
             android:textColor="#FFFFFF"
-            android:textSize="10sp"
+            android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
 
@@ -67,12 +82,12 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="46dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="2dp"
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Declined"
             android:textColor="#FFFFFF"
-            android:textSize="10sp"
+            android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
 
@@ -86,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tabHeaderLayout"
         android:layout_marginTop="16dp"
-        android:hint="Search orders or buyers..."
+        android:hint="Search orders, crops, or buyers..."
         app:boxStrokeColor="#2E7D32"
         app:hintTextColor="#2E7D32"
         app:startIconDrawable="@android:drawable/ic_menu_search"

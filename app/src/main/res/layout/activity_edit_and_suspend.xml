@@ -48,7 +48,7 @@
                             android:layout_height="match_parent"
                             android:contentDescription="Crop Picture"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/maize" />
+                            android:src="@android:drawable/ic_menu_gallery"/>
 
                         <View
                             android:layout_width="match_parent"
@@ -90,7 +90,6 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="textPersonName"
-                                android:text="Maize"
                                 android:textColor="#2E7D32"
                                 android:textStyle="bold" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -111,7 +110,6 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="text"
-                                android:text="57 kg"
                                 android:textColor="#333333" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -131,7 +129,6 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="numberDecimal"
-                                android:text="Tsh 2,500"
                                 android:textColor="#6D4C41"
                                 android:textStyle="bold" />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -152,7 +149,6 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="textPostalAddress"
-                                android:text="Morogoro"
                                 android:textColor="#333333" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -172,7 +168,6 @@
                                 android:enabled="false"
                                 android:focusable="false"
                                 android:inputType="none"
-                                android:text="12th July 2026"
                                 android:textColor="#6D4C41" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -199,7 +194,7 @@
             android:layout_height="54dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Decline"
+            android:text="Deactivate"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"

@@ -3,10 +3,14 @@
     android:color="?attr/colorControlHighlight">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#151515" />
+            <!-- Replace hardcoded solid color with a theme attribute -->
+            <solid android:color="?attr/CardBackgroundColor" />
+
+            <!-- Replace hardcoded stroke color with a theme attribute -->
             <stroke
                 android:width="1dp"
-                android:color="#333333" />
+                android:color="?attr/CardStrokeColor" />
+
             <corners android:radius="16dp" />
             <padding
                 android:left="8dp"

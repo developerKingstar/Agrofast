@@ -1,81 +1,145 @@
 package com.example.agrofastsolutions;
 
-import android.annotation.SuppressLint;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
-/**
- * My Space -- the full 4-category spec: Offers received, Offers turned
- * into orders (Pending), Completed orders, and Declined orders.
- */
 public class Show_order extends AppCompatActivity {
 
-    private MaterialButton btnReceivingOffers;
-    private MaterialButton btnPendingOrders;
-    private MaterialButton btnCompletedOrders;
-    private MaterialButton btnDeclinedOrders;
+    // Tabs
+    private MaterialButton btnSent, btnReceived, btnOrders, btnCompleted, btnDeclined;
+    private TextInputEditText etSearch;
 
-    private final int activeGreen = Color.parseColor("#1B4D3E");
-    private final int inactiveGray = Color.parseColor("#757575");
+    // Fragments
+    private Fragment currentFragment;
+    private SentFragment sentFragment;
+    private ReceivingFragment receivingFragment;
+    private PendingFragment pendingFragment;
+    private CompletedFragment completedFragment;
+    private DeclinedFragment declinedFragment;
 
-    @SuppressLint("MissingInflatedId")
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_order);
 
-        btnReceivingOffers = findViewById(R.id.btnReceivingOffers);
-        btnPendingOrders = findViewById(R.id.btnPendingOrders);
-        btnCompletedOrders = findViewById(R.id.btnCompletedOrders);
-        btnDeclinedOrders = findViewById(R.id.btnDeclinedOrders);
 
-        // Default tab on first launch: Pending Orders (in-progress orders)
-        if (savedInstanceState == null) {
-            loadFragment(new Pending());
-            setActiveTab(btnPendingOrders);
-        }
+        // Initialize views
+        initViews();
 
-        btnReceivingOffers.setOnClickListener(v -> {
-            loadFragment(new Receiving());
-            setActiveTab(btnReceivingOffers);
-        });
+        // Set default tab (Sent)
+        selectTab(btnSent);
 
-        btnPendingOrders.setOnClickListener(v -> {
-            loadFragment(new Pending());
-            setActiveTab(btnPendingOrders);
-        });
+    }
 
-        btnCompletedOrders.setOnClickListener(v -> {
-            loadFragment(new Completed());
-            setActiveTab(btnCompletedOrders);
-        });
+    private void initViews() {
+        btnSent = findViewById(R.id.btnSentOffers);
+        btnReceived = findViewById(R.id.btnReceivingOffers);
+        btnOrders = findViewById(R.id.btnPendingOrders);
+        btnCompleted = findViewById(R.id.btnCompletedOrders);
+        btnDeclined = findViewById(R.id.btnDeclinedOrders);
+        etSearch = findViewById(R.id.etSearchOrders);
 
-        btnDeclinedOrders.setOnClickListener(v -> {
-            loadFragment(new Declined());
-            setActiveTab(btnDeclinedOrders);
+        // Set click listeners
+        btnSent.setOnClickListener(v -> selectTab(btnSent));
+        btnReceived.setOnClickListener(v -> selectTab(btnReceived));
+        btnOrders.setOnClickListener(v -> selectTab(btnOrders));
+        btnCompleted.setOnClickListener(v -> selectTab(btnCompleted));
+        btnDeclined.setOnClickListener(v -> selectTab(btnDeclined));
+
+        // Search listener
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterFragments(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
         });
     }
 
-    private void loadFragment(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .commit();
+    private void selectTab(MaterialButton selectedButton) {
+        // Reset all button colors
+        resetTabColors();
+
+        // Highlight selected tab
+        selectedButton.setBackgroundColor(getColor(R.color.agrofast_dark_green));
+        selectedButton.setTextColor(getColor(android.R.color.white));
+
+        // Show corresponding fragment
+        Fragment fragment = getFragmentForTab(selectedButton);
+        if (fragment != null) {
+            replaceFragment(fragment);
+        }
     }
 
-    /** Highlights whichever of the 4 tab buttons is currently active. */
-    private void setActiveTab(MaterialButton active) {
-        MaterialButton[] all = { btnReceivingOffers, btnPendingOrders, btnCompletedOrders, btnDeclinedOrders };
-        for (MaterialButton button : all) {
-            int color = (button == active) ? activeGreen : inactiveGray;
-            button.setBackgroundTintList(ColorStateList.valueOf(color));
+    private Fragment getFragmentForTab(MaterialButton button) {
+        if (button.getId() == R.id.btnSentOffers) {
+            if (sentFragment == null) sentFragment = new SentFragment();
+            return sentFragment;
+        } else if (button.getId() == R.id.btnReceivingOffers) {
+            if (receivingFragment == null) receivingFragment = new ReceivingFragment();
+            return receivingFragment;
+        } else if (button.getId() == R.id.btnPendingOrders) {
+            if (pendingFragment == null) pendingFragment = new PendingFragment();
+            return pendingFragment;
+        } else if (button.getId() == R.id.btnCompletedOrders) {
+            if (completedFragment == null) completedFragment = new CompletedFragment();
+            return completedFragment;
+        } else if (button.getId() == R.id.btnDeclinedOrders) {
+            if (declinedFragment == null) declinedFragment = new DeclinedFragment();
+            return declinedFragment;
         }
+        return null;
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        if (fragment != null && fragment != currentFragment) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.fragmentContainer, fragment);
+            transaction.commit();
+            currentFragment = fragment;
+        }
+    }
+
+    private void resetTabColors() {
+        int defaultColor = getColor(R.color.agrofast_green);
+
+        btnSent.setBackgroundColor(defaultColor);
+        btnReceived.setBackgroundColor(defaultColor);
+        btnOrders.setBackgroundColor(defaultColor);
+        btnCompleted.setBackgroundColor(defaultColor);
+        btnDeclined.setBackgroundColor(defaultColor);
+
+        btnSent.setTextColor(getColor(android.R.color.white));
+        btnReceived.setTextColor(getColor(android.R.color.white));
+        btnOrders.setTextColor(getColor(android.R.color.white));
+        btnCompleted.setTextColor(getColor(android.R.color.white));
+        btnDeclined.setTextColor(getColor(android.R.color.white));
+    }
+
+    private void filterFragments(String query) {
+        // Pass search query to current fragment
+        if (currentFragment instanceof FilterableFragment) {
+            ((FilterableFragment) currentFragment).filter(query);
+        }
+    }
+
+    // Interface for fragments that support filtering
+    public interface FilterableFragment {
+        void filter(String query);
     }
 }

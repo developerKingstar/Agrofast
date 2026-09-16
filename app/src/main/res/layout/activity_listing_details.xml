@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6F8F4">
@@ -12,33 +11,55 @@
         android:padding="20dp">
 
         <ImageView
+            android:id="@+id/imgDetailPhoto"
             android:layout_width="match_parent"
             android:layout_height="210dp"
             android:src="@android:drawable/ic_menu_gallery"
             android:background="#C8E6C9"/>
+
         <TextView
+            android:id="@+id/tvDetailCrop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Fresh Maize"
+            android:text="Crop"
             android:textColor="#1B5E20"
             android:textSize="30sp"
             android:textStyle="bold"/>
+
         <TextView
+            android:id="@+id/tvDetailSeller"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Farmer: NAOMY BACHO"/>
+            android:text="Farmer: —"
+            android:textColor="#444441"
+            android:textSize="16sp"/>
 
         <TextView
+            android:id="@+id/tvDetailQuantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Available Quantity: 500 Kg"/>
+            android:layout_marginTop="6dp"
+            android:text="Available Quantity: —"
+            android:textColor="#444441"
+            android:textSize="16sp"/>
 
         <TextView
+            android:id="@+id/tvDetailLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Price: Tsh 1,200 per Kg"
+            android:layout_marginTop="6dp"
+            android:text="📍 Location"
+            android:textColor="#666666"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvDetailPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Price: —"
             android:textColor="#E65100"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -52,5 +73,6 @@
             android:text="MAKE OFFER"
             android:textColor="#FFFFFF"
             android:textStyle="bold"/>
+
     </LinearLayout>
 </ScrollView>

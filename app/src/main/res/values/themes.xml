@@ -3,6 +3,10 @@
     <style name="Base.Theme.AGROFASTASOLUTIONS" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+            <!-- Light mode color -->
+        <item name="CardBackgroundColor">@color/agrofast_green</item>
+        <item name="CardStrokeColor">@color/agrofast_green</item>
+
     </style>
 
     <style name="Theme.AGROFASTASOLUTIONS" parent="Base.Theme.AGROFASTASOLUTIONS" />

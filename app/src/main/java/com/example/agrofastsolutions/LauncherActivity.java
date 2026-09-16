@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.example.agrofastsolutions.auth.SupabaseAuthManager;
 
 /**
  * LAUNCHER SCREEN -- first thing the user sees.
@@ -43,8 +44,9 @@ public class LauncherActivity extends AppCompatActivity {
     }
 
     private void goToNextScreen() {
-        SharedPreferences prefs = getSharedPreferences("agrofast_prefs", MODE_PRIVATE);
-        boolean isLoggedIn = prefs.getBoolean("is_logged_in", false);
+        // ✅ Use SupabaseAuthManager — checks the real session
+        SupabaseAuthManager auth = new SupabaseAuthManager(this);
+        boolean isLoggedIn = auth.isLoggedIn();
 
         Intent intent = isLoggedIn
                 ? new Intent(this, DashBoardActivity.class)

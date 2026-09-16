@@ -1,72 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:orientation="vertical"
+    android:background="#F6F8F4">
 
+    <!-- TOP BAR -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="16dp"
+        android:background="#2E2D32">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_media_previous"
+            android:contentDescription="Back"
+            app:tint="#FFFFFF"/>
 
         <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Available Products"
-            android:textColor="#1B5E20"
-            android:textStyle="bold"
-            android:textSize="25sp"/>
+            android:layout_marginStart="12dp"
+            android:text="Available Listings"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-        <!-- PRODUCT CARD -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="#FFFFFF"
-            android:elevation="5dp"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fresh Maize"
-                android:textColor="#2E7D32"
-                android:textSize="22sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Quantity Available: 500Kg"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Price: Tsh 1,200/Kg"
-                android:textColor="#E65100"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Arusha, Tanzania"
-                android:textSize="16sp"/>
-
-            <Button
-                android:id="@+id/btnViewListing"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
-                android:backgroundTint="#2E7D32"
-                android:text="VIEW DETAILS"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+
+    <!-- CONTENT AREA -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- RecyclerView (the list of listings) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewListings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="6dp"
+            android:clipToPadding="false"/>
+
+        <!-- Progress spinner (shows while loading) -->
+        <ProgressBar
+            android:id="@+id/progressBarListings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <!-- Empty state (shows when no listings found) -->
+        <TextView
+            android:id="@+id/tvEmptyListings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No listings found"
+            android:textColor="#666666"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+
+</LinearLayout>
