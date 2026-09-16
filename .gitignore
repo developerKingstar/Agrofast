@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+# ==========================================
+# Supabase secrets — DO NOT COMMIT
+# ==========================================
+app/src/main/java/com/example/agrofastsolutions/Constants.java
