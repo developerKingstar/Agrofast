@@ -74,6 +74,102 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
+        <!-- ✅ Contact phone — tap to call -->
+        <TextView
+            android:id="@+id/tvOrderContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvOrderQuantity"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="6dp"
+            android:layout_toEndOf="@id/imgOrderCrop"
+            android:background="#EAF3DE"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="🛒 Buyer:\n🌾 Seller:"
+            android:textColor="#27500A"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="3dp" />
+
+        <!-- ✅ Declined info: reason + fee (shown only for declined orders) -->
+        <TextView
+            android:id="@+id/tvDeclineInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvOrderContact"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="6dp"
+            android:layout_toEndOf="@id/imgOrderCrop"
+            android:background="#FDECEA"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="6dp"
+            android:textColor="#B71C1C"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="3dp"
+            android:visibility="gone"
+            android:text="Reason: —\nFee: —" />
+
+        <!-- ✅ Grace period note (green, shown when no fee was charged) -->
+        <TextView
+            android:id="@+id/tvGraceInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvDeclineInfo"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@id/imgOrderCrop"
+            android:background="#EAF3DE"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="#27500A"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:text="✅ No fee — declined within 24h grace period" />
+
+
+        <!-- ✅ Action buttons (shown only on confirmed orders) -->
+        <LinearLayout
+            android:id="@+id/orderActionButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvOrderContact"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettle"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:text="Mark Settled"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:backgroundTint="#2E7D32"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDeclineOrder"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:text="Decline"
+                android:textColor="#B71C1C"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp"
+                app:strokeColor="#B71C1C" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tvOrderStatus"
             android:layout_width="wrap_content"

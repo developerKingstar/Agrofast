@@ -97,6 +97,13 @@ public class Order {
     }
 
     // Names from nested users
+    public String getBuyerUserId() {
+        return (buyer != null) ? buyer.userId : null;
+    }
+
+    public String getSellerUserId() {
+        return (seller != null) ? seller.userId : null;
+    }
     public String getBuyerName() {
         return (buyer != null) ? buyer.name : null;
     }
@@ -105,18 +112,24 @@ public class Order {
         return (seller != null) ? seller.name : null;
     }
 
+    // ✅ Phone numbers from nested users
+    public String getBuyerPhone() {
+        return (buyer != null) ? buyer.phone : null;
+    }
+
+    public String getSellerPhone() {
+        return (seller != null) ? seller.phone : null;
+    }
+
     // ===== Setters =====
     public void setOrderId(String v)          { orderId = v; }
     public void setOfferId(String v)          { offerId = v; }
     public void setBuyerId(String v)          { buyerId = v; }
     public void setSellerId(String v)         { sellerId = v; }
     public void setListingId(String v)        { listingId = v; }
-
     public void setQuantity(int v)            { quantity = v; }
-
     public void setPrice(int v)               { price = v; }
     public void setCurrency(String v)         { currency = v; }
-
     public void setStatus(String v)           { status = v; }
     public void setDeclineReason(String v)    { declineReason = v; }
     public void setDeclineFeeAmount(double v) { declineFeeAmount = v; }
@@ -130,10 +143,16 @@ public class Order {
     }
 
     public static class UserJoin {
+        @SerializedName("user_id")
+        public String userId;
+
         @SerializedName("name")
         public String name;
 
         @SerializedName("location")
         public String location;
+
+        @SerializedName("phone")
+        public String phone;
     }
 }

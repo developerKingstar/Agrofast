@@ -20,15 +20,6 @@
             android:background="@drawable/bg_circle_placeholder"
             android:contentDescription="Profile photo" />
 
-        <ImageView
-            android:id="@+id/iv_edit_badge"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_gravity="bottom|end"
-            android:src="@android:drawable/ic_menu_camera"
-            android:background="@drawable/bg_circle_edit_badge"
-            android:padding="4dp"
-            android:contentDescription="Change photo" />
     </FrameLayout>
 
     <TextView

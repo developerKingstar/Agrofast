@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- This exposes the app's internal cache directory where photos are commonly stored -->
-    <cache-path name="camera_cache_photos" path="." />
+
+        <external-files-path name="pictures" path="Pictures/"/>
+        <cache-path name="cache" path="."/>
 
     <!-- Alternatively, if you are saving photos to external files directory, use this: -->
     <!-- <external-files-path name="camera_external_photos" path="Pictures" /> -->

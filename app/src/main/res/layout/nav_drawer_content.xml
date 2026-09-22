@@ -152,6 +152,32 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/nav_favourites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="14dp"
+        android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="Favourites"
+            app:tint="@color/agrofast_white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Favourites"
+            android:textSize="16sp"
+            android:textColor="@color/agrofast_white" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/nav_customize"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -168,7 +194,7 @@
             android:layout_height="24dp"
             android:src="@android:drawable/ic_menu_preferences"
             android:contentDescription="Customize"
-            app:tint="@android:color/white" />
+            app:tint="@color/agrofast_white" />
 
         <TextView
             android:layout_width="wrap_content"

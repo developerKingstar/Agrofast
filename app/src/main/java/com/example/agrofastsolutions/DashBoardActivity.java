@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 //import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -27,6 +29,7 @@ import java.util.Calendar;
  */
 public class DashBoardActivity extends AppCompatActivity {
 
+    private String currentDisplayName = null;
     // Same preference file + key that SignUpActivity should write the
     // first name into when the account is created. See note below.
     private static final String PREFS_NAME = "agrofast_prefs";
@@ -71,6 +74,11 @@ public class DashBoardActivity extends AppCompatActivity {
         setupDrawerItem(R.id.nav_myspace,   () -> { Intent intent = new Intent(this, Show_order.class);
         startActivity(intent);});
 
+        setupDrawerItem(R.id.nav_favourites, () -> {
+            Intent intent = new Intent(this, FavouritesActivity.class);
+            startActivity(intent);
+        });
+
         setupDrawerItem(R.id.nav_customize, () -> { Intent intent = new Intent(this, CustomizeActivity.class);
             startActivity(intent);
         });
@@ -88,12 +96,56 @@ public class DashBoardActivity extends AppCompatActivity {
         tvTicker.setText("Maize: high demand, 850 TZS/kg (Dodoma)  |  Rice: 1200 TZS/kg  |  World coffee: $2.10/lb");
         tvTicker.setSelected(true);
 
-        // --- Typewriter greeting, now looping and using the real signed-up name ---
+        // --- Typewriter greeting: start is handled in onResume() ---
         tvGreeting = findViewById(R.id.tv_greeting);
-        String firstName = loadFirstName();
-        runGreetingCycle(tvGreeting, firstName);
+        // onResume() will start the typewriter with the current name
 
         // TODO: set up rv_news (RecyclerView) with a NewsAdapter once the news API call is wired up
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Check if the stored name changed (e.g., user edited profile)
+        String latestName = loadFirstName();
+
+        if (currentDisplayName == null) {
+            // First launch of this screen — store and start
+            currentDisplayName = latestName;
+            runGreetingCycle(tvGreeting, currentDisplayName);
+        } else if (!currentDisplayName.equals(latestName)) {
+            // Name changed — stop old loop and restart with new name
+            currentDisplayName = latestName;
+            typewriterHandler.removeCallbacksAndMessages(null);
+            runGreetingCycle(tvGreeting, currentDisplayName);
+        }
+
+        // ✅ Load (or refresh) the user's profile photo in the toolbar
+        loadDashboardAvatar();
+    }
+
+    // ==========================================
+    // DASHBOARD AVATAR — load the real profile photo
+    // ==========================================
+    private void loadDashboardAvatar() {
+        ImageView ivProfile = findViewById(R.id.iv_profile);
+
+        // Read the cached profile_photo_url from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String photoUrl = prefs.getString("profile_photo_url", "");
+
+        if (photoUrl != null && !photoUrl.isEmpty()) {
+            // ✅ Real photo exists — load it with Glide
+            Glide.with(this)
+                    .load(photoUrl)
+                    .placeholder(R.drawable.ic_account)
+                    .circleCrop()
+                    .into(ivProfile);
+        } else {
+            // ⚙️ No photo yet — show the default icon
+            ivProfile.setImageResource(R.drawable.ic_account);
+        }
     }
 
     // ==========================================

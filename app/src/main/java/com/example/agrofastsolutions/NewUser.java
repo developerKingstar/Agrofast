@@ -26,6 +26,22 @@ public class NewUser {
     @SerializedName("status")
     private String status;
 
+    // ===== Read-only fields (populated when fetching) =====
+
+    @SerializedName("profile_photo_url")
+    private String profilePhotoUrl;
+
+    @SerializedName("rating_avg")
+    private double ratingAvg;
+
+    @SerializedName("review_count")
+    private int reviewCount;
+
+    @SerializedName("created_at")
+    private String createdAt;
+
+    public NewUser() {}   // ← add this line
+
     public NewUser(String userId, String email, String phone,
                    String name, String location, String status) {
         this.userId = userId;
@@ -43,4 +59,8 @@ public class NewUser {
     public String getName()     { return name; }
     public String getLocation() { return location; }
     public String getStatus()   { return status; }
+    public String getProfilePhotoUrl() { return profilePhotoUrl; }
+    public double getRatingAvg()       { return ratingAvg; }
+    public int    getReviewCount()     { return reviewCount; }
+    public String getCreatedAt()       { return createdAt; }
 }

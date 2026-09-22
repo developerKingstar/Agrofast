@@ -59,12 +59,8 @@ public class Login extends AppCompatActivity {
             startActivity(new Intent(Login.this, Signup.class));
         });
 
-        // Forgot password — placeholder for now
-        txtForgotPassword.setOnClickListener(v -> {
-            Toast.makeText(this,
-                    "Password reset coming soon.",
-                    Toast.LENGTH_SHORT).show();
-        });
+        txtForgotPassword.setOnClickListener(v ->
+                startActivity(new Intent(Login.this, ForgotPasswordActivity.class)));
 
         // Login button
         btnLogin.setOnClickListener(v -> attemptLogin());

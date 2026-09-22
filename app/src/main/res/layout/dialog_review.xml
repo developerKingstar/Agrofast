@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/tvReviewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rate this user"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#1B1B1B"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Star row -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/star1"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_star_empty"
+            android:contentDescription="1 star" />
+
+        <ImageView
+            android:id="@+id/star2"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_star_empty"
+            android:contentDescription="2 stars" />
+
+        <ImageView
+            android:id="@+id/star3"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_star_empty"
+            android:contentDescription="3 stars" />
+
+        <ImageView
+            android:id="@+id/star4"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_star_empty"
+            android:contentDescription="4 stars" />
+
+        <ImageView
+            android:id="@+id/star5"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_star_empty"
+            android:contentDescription="5 stars" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etReviewComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Leave a comment (optional)"
+        android:minLines="2"
+        android:maxLines="4"
+        android:gravity="top|start"
+        android:padding="12dp"
+        android:background="@drawable/bg_review_input"
+        android:textColorHint="#9E9E9E"
+        android:textColor="#1B1B1B"
+        android:layout_marginBottom="20dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelReview"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:layout_marginEnd="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitReview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Submit"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+</LinearLayout>

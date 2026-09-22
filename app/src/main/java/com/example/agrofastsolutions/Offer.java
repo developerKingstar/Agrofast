@@ -83,6 +83,8 @@ public class Offer {
     }
 
     // Buyer name — pulled from nested buyer
+    public String getBuyerUserId()  { return (buyer  != null) ? buyer.userId  : null; }
+    public String getSellerUserId() { return (seller != null) ? seller.userId : null; }
     public String getBuyerName() {
         return (buyer != null) ? buyer.name : null;
     }
@@ -119,6 +121,9 @@ public class Offer {
     }
 
     public static class UserJoin {
+        @SerializedName("user_id")
+        public String userId;
+
         @SerializedName("name")
         public String name;
 

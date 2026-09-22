@@ -155,7 +155,11 @@ public class SupabaseAuthManager {
                             body.getAccessToken(), body.getRefreshToken());
 
                     Log.d(TAG, "login OK: user_id=" + userId);
-                    callback.onSuccess(userId);
+
+// ✅ Fetch fresh profile from public.users so Dashboard reads real name + photo
+//    (auth metadata can be stale if user edited profile after signup)
+                    refreshProfileIntoPrefs(userId, callback);
+
                 } else {
                     String errorBody = "Unknown error";
                     try {
@@ -172,6 +176,227 @@ public class SupabaseAuthManager {
                 callback.onError(DevLogger.toUserMessage("network"));
             }
         });
+
+    }
+
+    public void sendPasswordResetEmail(String email, AuthCallback callback) {
+
+        Log.d(TAG, "sendPasswordResetEmail: " + email);
+
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("email", email);
+
+        authApi.recoverPassword(body).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess("email_sent");
+                } else {
+                    String errorBody = "Unknown error";
+                    try {
+                        if (response.errorBody() != null) errorBody = response.errorBody().string();
+                    } catch (Exception ignored) {}
+                    DevLogger.logError("sendPasswordResetEmail", errorBody, null);
+
+                    if (response.code() == 429) {
+                        callback.onError("Too many reset emails. Please wait an hour and try again.");
+                    } else {
+                        callback.onError(DevLogger.toUserMessage(errorBody));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                DevLogger.logError("sendPasswordResetEmail", t.getMessage(), t);
+                callback.onError("Network: " + t.getMessage());
+            }
+        });
+    }
+
+    // ==========================================
+    // UPDATE PASSWORD WITH TOKEN (used by Reset Password flow)
+    // ==========================================
+    public void updatePasswordWithToken(String accessToken,
+                                        String newPassword,
+                                        AuthCallback callback) {
+
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("password", newPassword);
+
+        authApi.updateUser("Bearer " + accessToken, body)
+                .enqueue(new retrofit2.Callback<AuthResponse>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<AuthResponse> call,
+                                           retrofit2.Response<AuthResponse> response) {
+                        if (response.isSuccessful()) {
+                            Log.d(TAG, "password reset successful");
+                            callback.onSuccess("password_reset");
+                        } else {
+                            String errorBody = "Unknown error";
+                            try {
+                                if (response.errorBody() != null) errorBody = response.errorBody().string();
+                            } catch (Exception ignored) {}
+                            DevLogger.logError("updatePasswordWithToken", errorBody, null);
+                            callback.onError(DevLogger.toUserMessage(errorBody));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(retrofit2.Call<AuthResponse> call, Throwable t) {
+                        DevLogger.logError("updatePasswordWithToken", t.getMessage(), t);
+                        callback.onError("Network: " + t.getMessage());
+                    }
+                });
+    }
+
+    // ==========================================
+    // CHANGE PASSWORD (logged-in user, knows current password)
+    //   1. Re-login with current password (fresh token)
+    //   2. Update password
+    // ==========================================
+    public void changePassword(String currentPassword,
+                               String newPassword,
+                               AuthCallback callback) {
+
+        String email = prefs.getString("user_email", "");
+        if (email.isEmpty()) {
+            callback.onError("You're not logged in.");
+            return;
+        }
+
+        Log.d(TAG, "changePassword: re-authenticating " + email);
+
+        LoginRequest reLogin = new LoginRequest(email, currentPassword);
+
+        authApi.login("password", reLogin).enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    String errorBody = "Unknown error";
+                    try {
+                        if (response.errorBody() != null) errorBody = response.errorBody().string();
+                    } catch (Exception ignored) {}
+                    DevLogger.logError("changePassword (re-auth)", errorBody, null);
+                    callback.onError("Current password is incorrect.");
+                    return;
+                }
+
+                String freshToken = response.body().getAccessToken();
+                if (freshToken == null || freshToken.isEmpty()) {
+                    callback.onError("Could not verify your session. Please log in again.");
+                    return;
+                }
+
+                // Use the reusable method we already built for reset
+                updatePasswordWithToken(freshToken, newPassword, callback);
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                DevLogger.logError("changePassword (re-auth)", t.getMessage(), t);
+                callback.onError("Network error. Please try again.");
+            }
+        });
+    }
+
+    // ==========================================
+    // GET FRESH ACCESS TOKEN
+    //   - If current token is still valid → return it
+    //   - If expired → refresh it via refresh_token
+    //   - If refresh fails → return null (caller should route to login)
+    // ==========================================
+    public void getFreshAccessToken(TokenCallback callback) {
+
+        String currentToken = prefs.getString(KEY_ACCESS_TOKEN, "");
+        String refreshToken = prefs.getString(KEY_REFRESH_TOKEN, "");
+
+        // If no tokens at all → not logged in
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            callback.onResult(null);
+            return;
+        }
+
+        // Check if current token is still valid (with 5-min buffer)
+        if (isTokenValid(currentToken)) {
+            callback.onResult(currentToken);
+            return;
+        }
+
+        // Token expired → refresh it
+        Log.d(TAG, "Access token expired — refreshing...");
+
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("refresh_token", refreshToken);
+
+        authApi.refreshToken("refresh_token", body)
+                .enqueue(new Callback<AuthResponse>() {
+                    @Override
+                    public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            AuthResponse r = response.body();
+
+                            // Save new tokens
+                            SharedPreferences.Editor editor = prefs.edit();
+                            if (r.getAccessToken() != null) editor.putString(KEY_ACCESS_TOKEN, r.getAccessToken());
+                            if (r.getRefreshToken() != null) editor.putString(KEY_REFRESH_TOKEN, r.getRefreshToken());
+                            editor.apply();
+
+                            Log.d(TAG, "Token refreshed successfully");
+                            callback.onResult(r.getAccessToken());
+                        } else {
+                            Log.e(TAG, "Token refresh failed: HTTP " + response.code());
+                            // Refresh failed → session is dead
+                            prefs.edit().clear().apply();
+                            callback.onResult(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AuthResponse> call, Throwable t) {
+                        Log.e(TAG, "Token refresh network failure", t);
+                        callback.onResult(null);
+                    }
+                });
+    }
+
+    /**
+     * Decode JWT and check if it's still valid (with 5-min buffer).
+     */
+    private boolean isTokenValid(String token) {
+        if (token == null || token.isEmpty()) return false;
+
+        try {
+            String[] parts = token.split("\\.");
+            if (parts.length < 2) return false;
+
+            // Base64-decode the payload (2nd part)
+            String payload = new String(android.util.Base64.decode(
+                    parts[1], android.util.Base64.URL_SAFE | android.util.Base64.NO_WRAP));
+
+            // Look for "exp":1234567890
+            int expIdx = payload.indexOf("\"exp\":");
+            if (expIdx < 0) return false;
+
+            int start = expIdx + 6;
+            int end = payload.indexOf(",", start);
+            if (end < 0) end = payload.indexOf("}", start);
+
+            long exp = Long.parseLong(payload.substring(start, end).trim());
+            long now = System.currentTimeMillis() / 1000;
+
+            // Valid if exp is at least 5 minutes in the future
+            return exp > (now + 300);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Could not parse token", e);
+            return false;
+        }
+    }
+
+    // Callback for token retrieval
+    public interface TokenCallback {
+        void onResult(String accessToken);   // null if not available
     }
 
     // ==========================================
@@ -179,8 +404,80 @@ public class SupabaseAuthManager {
     // ==========================================
     public void logout() {
         Log.d(TAG, "logout");
-        // Clear local session first — don't wait for network
-        prefs.edit().clear().apply();
+        // Remove ONLY auth/session keys.
+        // Keeps non-auth keys (like nothing, in our case) safe.
+        // (profile_photo_url is removed here too — Login will re-write it fresh.)
+        prefs.edit()
+                .remove(KEY_USER_ID)
+                .remove(KEY_USER_EMAIL)
+                .remove(KEY_USER_NAME)
+                .remove(KEY_ACCESS_TOKEN)
+                .remove(KEY_REFRESH_TOKEN)
+                .remove("first_name")
+                .remove("profile_photo_url")
+                .remove("phone")
+                .remove("location")
+                .remove("email")
+                .remove("is_logged_in")
+                .apply();
+    }
+
+    // ==========================================
+// REFRESH PROFILE INTO PREFS
+//   Pulls name/phone/location/photo from public.users
+//   and stores them so Dashboard + BottomSheet read fresh data.
+// ==========================================
+    private void refreshProfileIntoPrefs(String userId, AuthCallback callback) {
+
+        com.example.agrofastsolutions.api.ApiService profileApi =
+                com.example.agrofastsolutions.api.ApiClient.getClient()
+                        .create(com.example.agrofastsolutions.api.ApiService.class);
+
+        profileApi.getUserById("eq." + userId)
+                .enqueue(new Callback<java.util.List<com.example.agrofastsolutions.NewUser>>() {
+                    @Override
+                    public void onResponse(Call<java.util.List<com.example.agrofastsolutions.NewUser>> call,
+                                           Response<java.util.List<com.example.agrofastsolutions.NewUser>> response) {
+
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && !response.body().isEmpty()) {
+
+                            com.example.agrofastsolutions.NewUser u = response.body().get(0);
+
+                            SharedPreferences.Editor e = prefs.edit();
+
+                            if (u.getName() != null && !u.getName().isEmpty()) {
+                                e.putString(KEY_USER_NAME, u.getName());
+                                // first word for Dashboard typewriter
+                                String first = u.getName().trim().split("\\s+")[0];
+                                e.putString("first_name", first);
+                            }
+                            if (u.getEmail() != null)          e.putString(KEY_USER_EMAIL, u.getEmail());
+                            if (u.getPhone() != null)          e.putString("phone", u.getPhone());
+                            if (u.getLocation() != null)       e.putString("location", u.getLocation());
+                            if (u.getProfilePhotoUrl() != null)
+                                e.putString("profile_photo_url", u.getProfilePhotoUrl());
+
+                            e.apply();
+
+                            Log.d(TAG, "profile refreshed into prefs for " + userId);
+                        } else {
+                            Log.w(TAG, "profile refresh empty: HTTP " + response.code());
+                        }
+
+                        // Whatever happened, let login continue
+                        callback.onSuccess(userId);
+                    }
+
+                    @Override
+                    public void onFailure(Call<java.util.List<com.example.agrofastsolutions.NewUser>> call,
+                                          Throwable t) {
+                        Log.e(TAG, "profile refresh network fail", t);
+                        // Don't block login — just continue
+                        callback.onSuccess(userId);
+                    }
+                });
     }
 
     // ==========================================
