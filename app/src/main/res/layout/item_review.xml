@@ -7,7 +7,7 @@
     android:layout_marginVertical="4dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="1dp"
-    app:cardBackgroundColor="@android:color/white">
+    app:cardBackgroundColor="?attr/colorPrimary">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                 android:text="Reviewer"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#1B1B1B"
+                android:textColor="?attr/colorOnPrimary"
                 android:maxLines="1"
                 android:ellipsize="end" />
 
@@ -39,7 +39,8 @@
                 android:layout_height="wrap_content"
                 android:text="Sep 1, 2026"
                 android:textSize="12sp"
-                android:textColor="#9E9E9E" />
+                android:textColor="?attr/colorOnPrimary"
+                android:alpha="0.7" />
         </LinearLayout>
 
         <TextView
@@ -49,7 +50,7 @@
             android:layout_marginTop="4dp"
             android:text="★★★★★"
             android:textSize="16sp"
-            android:textColor="#F5A623" />
+            android:textColor="?attr/colorOnPrimary" />
 
         <TextView
             android:id="@+id/tvReviewComment"
@@ -58,7 +59,8 @@
             android:layout_marginTop="6dp"
             android:text="Great buyer, fast payment."
             android:textSize="14sp"
-            android:textColor="#424242" />
+            android:textColor="?attr/colorOnPrimary"
+            android:alpha="0.9" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

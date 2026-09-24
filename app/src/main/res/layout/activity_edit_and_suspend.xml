@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F4"
+    android:background="?android:attr/colorBackground"
     android:padding="16dp"
     tools:context=".Edit_and_suspend">
 
@@ -26,18 +26,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="?attr/colorPrimary"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp">
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Header Image -->
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="200dp">
@@ -67,22 +64,20 @@
                             android:textStyle="bold" />
                     </RelativeLayout>
 
-                    <!-- Editable Details Form -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <!-- Item 1: Crop Type -->
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:hint="Crop Type"
-                            app:boxStrokeColor="#2E7D32"
-                            app:hintTextColor="#2E7D32">
+                            app:boxStrokeColor="?attr/colorOnPrimary"
+                            app:hintTextColor="?attr/colorOnPrimary">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etCropType"
@@ -90,19 +85,18 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="textPersonName"
-                                android:textColor="#2E7D32"
+                                android:textColor="?attr/colorOnPrimary"
                                 android:textStyle="bold" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- Item 2: Quantity -->
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:hint="Quantity"
-                            app:boxStrokeColor="#2E7D32"
-                            app:hintTextColor="#2E7D32">
+                            app:boxStrokeColor="?attr/colorOnPrimary"
+                            app:hintTextColor="?attr/colorOnPrimary">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etQuantity"
@@ -110,18 +104,17 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="text"
-                                android:textColor="#333333" />
+                                android:textColor="?attr/colorOnPrimary" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- Item 3: Price -->
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:hint="Price"
-                            app:boxStrokeColor="#6D4C41"
-                            app:hintTextColor="#6D4C41">
+                            app:boxStrokeColor="?attr/colorOnPrimary"
+                            app:hintTextColor="?attr/colorOnPrimary">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etPrice"
@@ -129,19 +122,18 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="numberDecimal"
-                                android:textColor="#6D4C41"
+                                android:textColor="?attr/colorOnPrimary"
                                 android:textStyle="bold" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- Item 4: Location -->
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:hint="Location"
-                            app:boxStrokeColor="#2E7D32"
-                            app:hintTextColor="#2E7D32">
+                            app:boxStrokeColor="?attr/colorOnPrimary"
+                            app:hintTextColor="?attr/colorOnPrimary">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etLocation"
@@ -149,17 +141,16 @@
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
                                 android:inputType="textPostalAddress"
-                                android:textColor="#333333" />
+                                android:textColor="?attr/colorOnPrimary" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- Item 5: Date of Harvest -->
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Date of Harvest"
-                            app:boxStrokeColor="#6D4C41"
-                            app:hintTextColor="#6D4C41">
+                            app:boxStrokeColor="?attr/colorOnPrimary"
+                            app:hintTextColor="?attr/colorOnPrimary">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etHarvestDate"
@@ -168,7 +159,7 @@
                                 android:enabled="false"
                                 android:focusable="false"
                                 android:inputType="none"
-                                android:textColor="#6D4C41" />
+                                android:textColor="?attr/colorOnPrimary" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -177,7 +168,6 @@
         </ScrollView>
     </FrameLayout>
 
-    <!-- Bottom Buttons -->
     <LinearLayout
         android:id="@+id/bottomButtonContainer"
         android:layout_width="match_parent"
@@ -195,11 +185,11 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:text="Deactivate"
-            android:textColor="#FFFFFF"
+            android:textColor="#FF2000"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:backgroundTint="#FF2000"
-            app:cornerRadius="12dp" />
+            app:cornerRadius="12dp"
+            app:strokeColor="#FF2000" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAccept"
@@ -209,10 +199,9 @@
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="Edit"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:backgroundTint="#1B4D3E"
             app:cornerRadius="12dp" />
     </LinearLayout>
 

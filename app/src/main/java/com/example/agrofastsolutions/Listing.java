@@ -66,6 +66,16 @@ public class Listing {
         return (seller != null) ? seller.location : location;
     }
 
+    /**
+     * Convenience: first photo URL, or null if none.
+     */
+    public String getFirstPhotoUrl() {
+        if (photos != null && photos.length > 0) {
+            return photos[0];
+        }
+        return null;
+    }
+
     // ===== Setters (used when creating new listings later) =====
     public void setListingId(String x)          { listingId = x; }
     public void setSellerId(String x)           { sellerId = x; }

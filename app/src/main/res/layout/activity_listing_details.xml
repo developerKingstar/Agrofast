@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F8F4">
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="210dp"
             android:src="@android:drawable/ic_menu_gallery"
-            android:background="#C8E6C9"/>
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/tvDetailCrop"
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Crop"
-            android:textColor="#1B5E20"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="30sp"
             android:textStyle="bold"/>
 
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Farmer: —"
-            android:textColor="#444441"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"/>
 
         <TextView
@@ -42,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="Available Quantity: —"
-            android:textColor="#444441"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"/>
 
         <TextView
@@ -51,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="📍 Location"
-            android:textColor="#666666"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"/>
 
         <TextView
@@ -60,19 +61,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Price: —"
-            android:textColor="#E65100"
+            android:textColor="?attr/colorPrimary"
             android:textSize="20sp"
             android:textStyle="bold"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnMakeOffer"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:layout_marginTop="30dp"
-            android:backgroundTint="#2E7D32"
             android:text="MAKE OFFER"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"/>
+            android:textColor="?attr/colorOnPrimary"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"/>
 
     </LinearLayout>
 </ScrollView>

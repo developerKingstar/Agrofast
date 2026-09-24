@@ -2,6 +2,7 @@ package com.example.agrofastsolutions.api;
 
 import com.example.agrofastsolutions.Favourite;
 import com.example.agrofastsolutions.Listing;
+import com.example.agrofastsolutions.MarketPrice;
 import com.example.agrofastsolutions.NewFavourite;
 import com.example.agrofastsolutions.NewListing;
 import com.example.agrofastsolutions.NewOffer;
@@ -102,7 +103,7 @@ public interface ApiService {
     //---------------------------------------------------------------------------
 
     // Fetch a single offer by its ID
-    @GET("offers?select=*,listing:listings!offers_listing_id_fkey(crop_type),buyer:users!offers_buyer_id_fkey(user_id,name,location),seller:users!offers_seller_id_fkey(user_id,name,location)")
+    @GET("offers?select=*,listing:listings!offers_listing_id_fkey(crop_type,photos),buyer:users!offers_buyer_id_fkey(user_id,name,location),seller:users!offers_seller_id_fkey(user_id,name,location)")
     Call<List<Offer>> getOfferById(@Query("offer_id") String offerIdEq);
 
 
@@ -111,35 +112,61 @@ public interface ApiService {
     // ==========================================
 
     // Sent offers (I am the buyer)
-    @GET("offers?select=*,listing:listings!offers_listing_id_fkey(crop_type),buyer:users!offers_buyer_id_fkey(user_id,name,location),seller:users!offers_seller_id_fkey(user_id,name,location)&order=created_at.desc")
+    @GET("offers?select=*,listing:listings!offers_listing_id_fkey(crop_type,photos),buyer:users!offers_buyer_id_fkey(user_id,name,location),seller:users!offers_seller_id_fkey(user_id,name,location)&order=created_at.desc")
     Call<List<Offer>> getSentOffers(
             @Query("buyer_id") String buyerIdEq
     );
 
     // Received offers (I am the seller)
-    @GET("offers?select=*,listing:listings!offers_listing_id_fkey(crop_type),buyer:users!offers_buyer_id_fkey(user_id,name,location),seller:users!offers_seller_id_fkey(user_id,name,location)&order=created_at.desc")
+    @GET("offers?select=*,listing:listings!offers_listing_id_fkey(crop_type,photos),buyer:users!offers_buyer_id_fkey(user_id,name,location),seller:users!offers_seller_id_fkey(user_id,name,location)&order=created_at.desc")
     Call<List<Offer>> getReceivedOffers(
             @Query("seller_id") String sellerIdEq,
             @Query("status") String statusEq
+    );
+
+    // ==========================================================
+    // MARKET PRICES
+    // ==========================================================
+
+    /**
+     * Fetch market prices from Supabase.
+     * Example select: "crop_name,region,unit,price,price_low,price_high,weekly_change,monthly_change,published_date"
+     * Example order:  "published_date.desc"
+     */
+    @GET("market_prices")
+    Call<List<MarketPrice>> getMarketPrices(
+            @Query("select") String select,
+            @Query("order")  String order
+    );
+
+    /**
+     * Search market prices by crop name (case-insensitive contains).
+     * Example cropFilter: "ilike.*maize*"
+     */
+    @GET("market_prices")
+    Call<List<MarketPrice>> searchMarketPrices(
+            @Query("crop_name") String cropFilter,
+            @Query("select")    String select,
+            @Query("order")     String order
     );
 
     // ==========================================
     // ORDERS — with joined listing + buyer + seller
     // ==========================================
 
-    @GET("orders?select=*,listing:listings!orders_listing_id_fkey(crop_type),buyer:users!orders_buyer_id_fkey(user_id,name,phone),seller:users!orders_seller_id_fkey(user_id,name,phone)&order=accepted_at.desc")
+    @GET("orders?select=*,listing:listings!orders_listing_id_fkey(crop_type,photos),buyer:users!orders_buyer_id_fkey(user_id,name,phone),seller:users!orders_seller_id_fkey(user_id,name,phone)&order=accepted_at.desc")
     Call<List<Order>> getActiveOrders(
             @Query("or") String orFilter,
             @Query("status") String statusEq
     );
 
-    @GET("orders?select=*,listing:listings!orders_listing_id_fkey(crop_type),buyer:users!orders_buyer_id_fkey(user_id,name,phone),seller:users!orders_seller_id_fkey(user_id,name,phone)&order=accepted_at.desc")
+    @GET("orders?select=*,listing:listings!orders_listing_id_fkey(crop_type,photos),buyer:users!orders_buyer_id_fkey(user_id,name,phone),seller:users!orders_seller_id_fkey(user_id,name,phone)&order=accepted_at.desc")
     Call<List<Order>> getCompletedOrders(
             @Query("or") String orFilter,
             @Query("status") String statusEq
     );
 
-    @GET("orders?select=*,listing:listings!orders_listing_id_fkey(crop_type),buyer:users!orders_buyer_id_fkey(user_id,name,phone),seller:users!orders_seller_id_fkey(user_id,name,phone)&order=accepted_at.desc")
+    @GET("orders?select=*,listing:listings!orders_listing_id_fkey(crop_type,photos),buyer:users!orders_buyer_id_fkey(user_id,name,phone),seller:users!orders_seller_id_fkey(user_id,name,phone)&order=accepted_at.desc")
     Call<List<Order>> getDeclinedOrders(
             @Query("or") String orFilter,
             @Query("status") String statusEq

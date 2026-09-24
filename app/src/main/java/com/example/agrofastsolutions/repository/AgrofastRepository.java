@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.agrofastsolutions.Constants;
 import com.example.agrofastsolutions.Listing;
+import com.example.agrofastsolutions.MarketPrice;
 import com.example.agrofastsolutions.NewListing;
 import com.example.agrofastsolutions.NewOffer;
 import com.example.agrofastsolutions.NewUser;
@@ -206,10 +207,26 @@ public class AgrofastRepository {
     // LISTINGS (Sell flow)
     // ==========================================
 
+    /**
+     * Create a listing WITHOUT a photo (backward compatible).
+     */
     public void createListing(String cropType,
                               double quantity,
                               double price,
                               String location,
+                              DataCallback<Void> callback) {
+        createListing(cropType, quantity, price, location, null, callback);
+    }
+
+    /**
+     * Create a listing WITH an optional photo URL.
+     * Pass photoUrl = null if no photo.
+     */
+    public void createListing(String cropType,
+                              double quantity,
+                              double price,
+                              String location,
+                              String photoUrl,
                               DataCallback<Void> callback) {
 
         String sellerId = getCurrentUserId();
@@ -218,7 +235,8 @@ public class AgrofastRepository {
                 " crop=" + cropType +
                 " qty=" + quantity +
                 " price=" + price +
-                " location=" + location);
+                " location=" + location +
+                " photo=" + (photoUrl != null ? "yes" : "no"));
 
         NewListing listing = new NewListing(
                 sellerId,
@@ -227,7 +245,8 @@ public class AgrofastRepository {
                 "kg",
                 price,
                 location,
-                "active"
+                "active",
+                photoUrl          // ← null or URL
         );
 
         apiService.createListing(listing, "return=minimal")
@@ -240,7 +259,8 @@ public class AgrofastRepository {
                         } else {
                             String errorBody = "Unknown error";
                             try {
-                                if (response.errorBody() != null) errorBody = response.errorBody().string();
+                                if (response.errorBody() != null)
+                                    errorBody = response.errorBody().string();
                             } catch (Exception ignored) {}
                             DevLogger.logError("createListing", errorBody, null);
                             callback.onError("HTTP " + response.code() + ": " + errorBody);
@@ -713,6 +733,65 @@ public class AgrofastRepository {
     }
 
     // ==========================================
+    // MARKET PRICES
+    // ==========================================
+
+    private static final String MARKET_SELECT =
+            "crop_name,region,unit,price,price_low,price_high,weekly_change,monthly_change,published_date";
+
+    /**
+     * Fetch all market prices, newest first.
+     */
+    public void getMarketPrices(DataCallback<List<MarketPrice>> callback) {
+        Log.d(TAG, "getMarketPrices");
+
+        apiService.getMarketPrices(MARKET_SELECT, "published_date.desc")
+                .enqueue(new Callback<List<MarketPrice>>() {
+                    @Override
+                    public void onResponse(Call<List<MarketPrice>> call,
+                                           Response<List<MarketPrice>> response) {
+                        handleListResponse(response, call, callback, "market prices");
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<MarketPrice>> call, Throwable t) {
+                        DevLogger.logError("getMarketPrices", t.getMessage(), t);
+                        callback.onError("Network: " + t.getMessage());
+                    }
+                });
+    }
+
+    /**
+     * Search market prices by crop name (case-insensitive, partial).
+     */
+    public void searchMarketPrices(String query,
+                                   DataCallback<List<MarketPrice>> callback) {
+        Log.d(TAG, "searchMarketPrices: " + query);
+
+        if (query == null || query.trim().isEmpty()) {
+            getMarketPrices(callback);
+            return;
+        }
+
+        String filter = "ilike.*" + query.trim().toLowerCase() + "*";
+
+        apiService.searchMarketPrices(filter, MARKET_SELECT, "published_date.desc")
+                .enqueue(new Callback<List<MarketPrice>>() {
+                    @Override
+                    public void onResponse(Call<List<MarketPrice>> call,
+                                           Response<List<MarketPrice>> response) {
+                        handleListResponse(response, call, callback, "market search");
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<MarketPrice>> call, Throwable t) {
+                        DevLogger.logError("searchMarketPrices", t.getMessage(), t);
+                        callback.onError("Network: " + t.getMessage());
+                    }
+                });
+    }
+
+    // ==========================================
     // REVIEWS
     // ==========================================
 
@@ -1149,6 +1228,104 @@ public class AgrofastRepository {
                 doUpload(fileBytes, extension, userId, freshToken, callback);
             }
         });
+    }
+
+    // ==========================================
+    // LISTING PHOTO UPLOAD
+    // ==========================================
+
+    /**
+     * Upload a photo for a listing to Supabase Storage.
+     *
+     * Flow (mirrors uploadProfilePhoto):
+     *   1. Get a fresh access token
+     *   2. Upload file to listing-photos/{userId}/{timestamp}.{ext}
+     *   3. Return the public URL
+     *
+     * The caller then passes this URL to createListing(...).
+     *
+     * @param fileBytes  Byte content of the image
+     * @param extension  File extension (e.g., "jpg" — no dot)
+     * @param callback   Called with the new public URL on success
+     */
+    public void uploadListingPhoto(byte[] fileBytes, String extension,
+                                   DataCallback<String> callback) {
+
+        String userId = getCurrentUserId();
+        Log.d(TAG, "uploadListingPhoto for: " + userId);
+
+        if (userId == null || userId.isEmpty()) {
+            callback.onError("Not logged in");
+            return;
+        }
+
+        SupabaseAuthManager authManager = new SupabaseAuthManager(appContext);
+
+        authManager.getFreshAccessToken(new SupabaseAuthManager.TokenCallback() {
+            @Override
+            public void onResult(String freshToken) {
+                if (freshToken == null || freshToken.isEmpty()) {
+                    callback.onError("Session expired. Please log in again.");
+                    return;
+                }
+                doListingUpload(fileBytes, extension, userId, freshToken, callback);
+            }
+        });
+    }
+
+    private void doListingUpload(byte[] fileBytes, String extension,
+                                 String userId, String accessToken,
+                                 DataCallback<String> callback) {
+
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String fileName  = timestamp + "." + extension;
+        String storagePath = userId + "/" + fileName;
+
+        okhttp3.RequestBody fileBody = okhttp3.RequestBody.create(
+                okhttp3.MediaType.parse("image/*"), fileBytes);
+        okhttp3.MultipartBody.Part filePart =
+                okhttp3.MultipartBody.Part.createFormData("file", fileName, fileBody);
+
+        okhttp3.RequestBody cacheBody = okhttp3.RequestBody.create(
+                okhttp3.MediaType.parse("text/plain"), "3600");
+
+        String bearer = "Bearer " + accessToken;
+
+        com.example.agrofastsolutions.api.StorageService storageService =
+                com.example.agrofastsolutions.api.StorageClient.getClient()
+                        .create(com.example.agrofastsolutions.api.StorageService.class);
+
+        String fullPath = Constants.BUCKET_LISTING_PHOTOS + "/" + storagePath;
+
+        storageService.uploadFile(fullPath, bearer, Constants.SUPABASE_ANON_KEY,
+                        "true", filePart, cacheBody)
+                .enqueue(new Callback<okhttp3.ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<okhttp3.ResponseBody> call,
+                                           Response<okhttp3.ResponseBody> response) {
+                        if (!response.isSuccessful()) {
+                            String errorBody = "Upload failed";
+                            try {
+                                if (response.errorBody() != null)
+                                    errorBody = response.errorBody().string();
+                            } catch (Exception ignored) {}
+                            DevLogger.logError("uploadListingPhoto (upload)", errorBody, null);
+                            callback.onError("Upload failed (HTTP " + response.code() + ")");
+                            return;
+                        }
+
+                        String publicUrl = Constants.publicStorageUrl(
+                                Constants.BUCKET_LISTING_PHOTOS, storagePath);
+                        Log.d(TAG, "listing photo uploaded: " + publicUrl);
+                        callback.onSuccess(publicUrl);
+                    }
+
+                    @Override
+                    public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {
+                        DevLogger.logError("uploadListingPhoto (upload)", t.getMessage(), t);
+                        callback.onError("Network: " + t.getMessage());
+                    }
+                });
     }
 
     private void doUpload(byte[] fileBytes, String extension,

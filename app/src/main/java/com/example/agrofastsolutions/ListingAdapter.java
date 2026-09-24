@@ -9,19 +9,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingViewHolder> {
 
-    private List<Listing> listings;
-    private OnListingClickListener listener;
+    private final List<Listing> listings;
+    private final OnListingClickListener listener;
 
-    // ===== Click callback interface =====
     public interface OnListingClickListener {
         void onListingClick(Listing listing);
     }
 
-    // ===== Constructor =====
     public ListingAdapter(List<Listing> listings, OnListingClickListener listener) {
         this.listings = listings;
         this.listener = listener;
@@ -46,61 +46,59 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
         return listings.size();
     }
 
-    // ===== ViewHolder =====
     static class ListingViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imgCrop;
-        private TextView tvCropType, tvSeller, tvQuantity, tvLocation, tvPrice;
+        private final ImageView imgCrop;
+        private final TextView tvCropType, tvSeller, tvQuantity, tvLocation, tvPrice;
 
         public ListingViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgCrop     = itemView.findViewById(R.id.imgCrop);
-            tvCropType  = itemView.findViewById(R.id.tvCropType);
-            tvSeller    = itemView.findViewById(R.id.tvSeller);
-            tvQuantity  = itemView.findViewById(R.id.tvQuantity);
-            tvLocation  = itemView.findViewById(R.id.tvLocation);
-            tvPrice     = itemView.findViewById(R.id.tvPrice);
+            imgCrop    = itemView.findViewById(R.id.imgCrop);
+            tvCropType = itemView.findViewById(R.id.tvCropType);
+            tvSeller   = itemView.findViewById(R.id.tvSeller);
+            tvQuantity = itemView.findViewById(R.id.tvQuantity);
+            tvLocation = itemView.findViewById(R.id.tvLocation);
+            tvPrice    = itemView.findViewById(R.id.tvPrice);
         }
 
         public void bind(Listing listing, OnListingClickListener listener) {
 
-            // Crop type
             tvCropType.setText(listing.getCropType() != null
                     ? listing.getCropType() : "Crop");
 
-            // Seller name
             tvSeller.setText("Seller: " + listing.getSellerName());
 
-            // Quantity (show "500 kg" or "500" if unit is null)
             String unit = (listing.getUnit() != null) ? listing.getUnit() : "kg";
             tvQuantity.setText("Qty: " + formatNumber(listing.getQuantityAvailable()) + " " + unit);
 
-            // Location
             tvLocation.setText("📍 " + (listing.getLocation() != null
                     ? listing.getLocation() : "Unknown"));
 
-            // Price badge (as "TSh 900/kg")
             tvPrice.setText("TSh " + formatNumber(listing.getAskingPrice()) + "/" + unit);
 
-            // Crop icon (placeholder for now, we'll swap later)
-            imgCrop.setImageResource(getCropIcon(listing.getCropType()));
+            // ===== Photo load =====
+            String photoUrl = listing.getFirstPhotoUrl();
+            if (photoUrl != null && !photoUrl.isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(photoUrl)
+                        .placeholder(getCropIcon(listing.getCropType()))
+                        .error(getCropIcon(listing.getCropType()))
+                        .centerCrop()
+                        .into(imgCrop);
+            } else {
+                imgCrop.setImageResource(getCropIcon(listing.getCropType()));
+            }
 
-            // Whole card is clickable
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onListingClick(listing);
             });
         }
 
-        // ===== Helper: format doubles without trailing ".0" =====
         private String formatNumber(double value) {
-            if (value == (long) value) {
-                return String.valueOf((long) value);   // 500.0 → "500"
-            } else {
-                return String.valueOf(value);           // 500.5 → "500.5"
-            }
+            if (value == (long) value) return String.valueOf((long) value);
+            return String.valueOf(value);
         }
 
-        // ===== Helper: pick an icon based on crop type =====
         private int getCropIcon(String cropType) {
             if (cropType == null) return android.R.drawable.ic_menu_gallery;
             switch (cropType.toLowerCase()) {

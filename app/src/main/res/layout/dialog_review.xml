@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@android:color/white">
+    android:background="?attr/colorSurface">
 
     <TextView
         android:id="@+id/tvReviewTitle"
@@ -13,11 +13,10 @@
         android:text="Rate this user"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#1B1B1B"
+        android:textColor="?android:attr/textColorPrimary"
         android:gravity="center"
         android:layout_marginBottom="20dp" />
 
-    <!-- Star row -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,8 +75,8 @@
         android:gravity="top|start"
         android:padding="12dp"
         android:background="@drawable/bg_review_input"
-        android:textColorHint="#9E9E9E"
-        android:textColor="#1B1B1B"
+        android:textColorHint="?android:attr/textColorHint"
+        android:textColor="?android:attr/textColorPrimary"
         android:layout_marginBottom="20dp" />
 
     <LinearLayout
@@ -92,7 +91,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Cancel"
-            android:layout_marginEnd="8dp" />
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginEnd="8dp"
+            app:strokeColor="?android:attr/textColorSecondary"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSubmitReview"
@@ -100,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Submit"
+            android:textColor="?attr/colorOnPrimary"
             android:layout_marginStart="8dp" />
     </LinearLayout>
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F8F4"
+    android:background="?android:attr/colorBackground"
     android:fillViewport="true">
 
     <LinearLayout
@@ -11,25 +11,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- ============================================
-             HEADER WRAPPER — includes dark bar + avatar
-             clipChildren=false lets avatar overflow
-             ============================================ -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:clipChildren="false"
             android:clipToPadding="false">
 
-            <!-- Dark header bar (top 200dp only) -->
-
-            <!-- Avatar — sits INSIDE the FrameLayout but OVERLAPS the header bottom edge -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="#2E2D32">
+                android:background="?attr/colorPrimary">
 
-                <!-- Back button -->
                 <ImageButton
                     android:id="@+id/btnBackProfile"
                     android:layout_width="48dp"
@@ -38,16 +30,15 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="Back"
                     android:src="@android:drawable/ic_media_previous"
-                    app:tint="#FFFFFF" />
+                    app:tint="?attr/colorOnPrimary" />
 
-                <!-- Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="16dp"
                     android:text="My Profile"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -62,15 +53,8 @@
                 android:contentDescription="Profile photo"
                 android:scaleType="centerCrop"
                 android:src="@android:drawable/ic_menu_myplaces" />
-
         </FrameLayout>
 
-        <!-- ============================================
-             CONTENT — starts right after the header wrapper
-             The avatar's bottom half sits over the top of this section
-             ============================================ -->
-
-        <!-- Name -->
         <TextView
             android:id="@+id/tvProfileName"
             android:layout_width="wrap_content"
@@ -78,11 +62,10 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="12dp"
             android:text="Name"
-            android:textColor="#1B4D3E"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- Rating row -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,31 +89,29 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:text="(0 reviews)"
-                android:textColor="#888888"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- Status pill -->
         <TextView
             android:id="@+id/tvProfileStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:background="@drawable/status_completed"
+            android:background="@drawable/pill_translucent"
             android:paddingHorizontal="12dp"
             android:paddingVertical="4dp"
             android:text="ACTIVE"
-            android:textColor="#27500A"
+            android:textColor="?attr/colorPrimary"
             android:textSize="11sp"
             android:textStyle="bold" />
 
-        <!-- Details card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="?attr/colorPrimary"
             app:cardCornerRadius="14dp"
             app:cardElevation="2dp">
 
@@ -144,7 +125,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Email"
-                    android:textColor="#888888"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.7"
                     android:textSize="12sp" />
 
                 <TextView
@@ -153,14 +135,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"
                     android:text="—"
-                    android:textColor="#222222"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phone"
-                    android:textColor="#888888"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.7"
                     android:textSize="12sp" />
 
                 <TextView
@@ -169,14 +152,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"
                     android:text="—"
-                    android:textColor="#222222"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Location"
-                    android:textColor="#888888"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.7"
                     android:textSize="12sp" />
 
                 <TextView
@@ -185,14 +169,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"
                     android:text="—"
-                    android:textColor="#222222"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Member since"
-                    android:textColor="#888888"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.7"
                     android:textSize="12sp" />
 
                 <TextView
@@ -200,13 +185,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="—"
-                    android:textColor="#222222"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="15sp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Edit Profile -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEditProfile"
             android:layout_width="match_parent"
@@ -214,13 +198,11 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:text="Edit Profile"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:backgroundTint="#2E7D32"
             app:cornerRadius="12dp" />
 
-        <!-- Change Photo -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChangePhoto"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -230,13 +212,12 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="24dp"
             android:text="Change Photo"
-            android:textColor="#2E7D32"
+            android:textColor="?attr/colorPrimary"
             android:textSize="15sp"
             android:textStyle="bold"
             app:cornerRadius="12dp"
-            app:strokeColor="#2E7D32" />
+            app:strokeColor="?attr/colorPrimary" />
 
-        <!-- Loading -->
         <ProgressBar
             android:id="@+id/progressBarProfile"
             android:layout_width="wrap_content"

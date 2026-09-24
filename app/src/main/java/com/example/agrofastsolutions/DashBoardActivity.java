@@ -8,8 +8,9 @@ import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
-//import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -17,27 +18,38 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.agrofastsolutions.auth.SupabaseAuthManager;
+import com.example.agrofastsolutions.news.NewsAdapter;
+import com.example.agrofastsolutions.news.NewsDataResponse;
+import com.example.agrofastsolutions.news.NewsRepository;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * DASHBOARD SCREEN -- the home screen after login.
  * Shows the custom hamburger menu, profile icon, a looping typewriter
- * greeting, the price ticker, and the news feed.
+ * greeting, the price ticker, and the agricultural news feed.
  */
 public class DashBoardActivity extends AppCompatActivity {
 
     private String currentDisplayName = null;
-    // Same preference file + key that SignUpActivity should write the
-    // first name into when the account is created. See note below.
     private static final String PREFS_NAME = "agrofast_prefs";
     private static final String KEY_FIRST_NAME = "first_name";
 
     private DrawerLayout drawerLayout;
     private TextView tvTicker;
     private TextView tvGreeting;
+
+    // ---------- News ----------
+    private NewsRepository newsRepo;
+    private NewsAdapter newsAdapter;
+    private final List<NewsDataResponse.NewsArticle> newsArticles = new ArrayList<>();
+    private boolean newsLoaded = false;
 
     private final Handler typewriterHandler = new Handler(Looper.getMainLooper());
 
@@ -61,36 +73,45 @@ public class DashBoardActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        setupDrawerItem(R.id.nav_buy,       () -> {  Intent intent = new Intent(this, BuyActivity.class);
+        setupDrawerItem(R.id.nav_buy, () -> {
+            Intent intent = new Intent(this, BuyActivity.class);
             startActivity(intent);
         });
 
-        setupDrawerItem(R.id.nav_sell,      () -> { Intent intent = new Intent(this, Create_listing.class);
+        setupDrawerItem(R.id.nav_sell, () -> {
+            Intent intent = new Intent(this, Create_listing.class);
             startActivity(intent);
         });
 
-        setupDrawerItem(R.id.nav_market,    () -> { /* TODO: open MarketActivity */ });
+        setupDrawerItem(R.id.nav_market, () -> {
+            Intent intent = new Intent(this, MarketActivity.class);
+            startActivity(intent);
+        });
 
-        setupDrawerItem(R.id.nav_myspace,   () -> { Intent intent = new Intent(this, Show_order.class);
-        startActivity(intent);});
+        setupDrawerItem(R.id.nav_myspace, () -> {
+            Intent intent = new Intent(this, Show_order.class);
+            startActivity(intent);
+        });
 
         setupDrawerItem(R.id.nav_favourites, () -> {
             Intent intent = new Intent(this, FavouritesActivity.class);
             startActivity(intent);
         });
 
-        setupDrawerItem(R.id.nav_customize, () -> { Intent intent = new Intent(this, CustomizeActivity.class);
+        setupDrawerItem(R.id.nav_customize, () -> {
+            Intent intent = new Intent(this, CustomizeActivity.class);
             startActivity(intent);
         });
 
-        setupDrawerItem(R.id.nav_guide,     () -> { Intent intent = new Intent(this, UserGuideActivity.class);
-        startActivity(intent);});
+        setupDrawerItem(R.id.nav_guide, () -> {
+            Intent intent = new Intent(this, UserGuideActivity.class);
+            startActivity(intent);
+        });
 
         setupDrawerItem(R.id.nav_logout, this::performLogout);
 
         findViewById(R.id.iv_profile).setOnClickListener(v ->
                 new ProfileBottomSheet().show(getSupportFragmentManager(), "profile_sheet"));
-
 
         tvTicker = findViewById(R.id.tv_ticker);
         tvTicker.setText("Maize: high demand, 850 TZS/kg (Dodoma)  |  Rice: 1200 TZS/kg  |  World coffee: $2.10/lb");
@@ -98,11 +119,90 @@ public class DashBoardActivity extends AppCompatActivity {
 
         // --- Typewriter greeting: start is handled in onResume() ---
         tvGreeting = findViewById(R.id.tv_greeting);
-        // onResume() will start the typewriter with the current name
 
-        // TODO: set up rv_news (RecyclerView) with a NewsAdapter once the news API call is wired up
+        // ---------- News section ----------
+        setupNewsSection();
     }
 
+    // ==========================================
+    // NEWS SECTION — RecyclerView + NewsRepository
+    // ==========================================
+    private void setupNewsSection() {
+        RecyclerView rvNews = findViewById(R.id.rv_news);
+
+        // Horizontal scrolling — fits the green card
+        rvNews.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        newsAdapter = new NewsAdapter(newsArticles);
+        rvNews.setAdapter(newsAdapter);
+
+        newsRepo = new NewsRepository();
+        loadAgriculturalNews();
+    }
+
+    /**
+     * Fetch agricultural news.
+     * Strategy: try Tanzania first; if empty/error, fall back to global.
+     */
+    private void loadAgriculturalNews() {
+        newsRepo.fetchAgricultureNews("tz", new NewsRepository.NewsCallback() {
+            @Override
+            public void onSuccess(List<NewsDataResponse.NewsArticle> result) {
+                if (isFinishing() || isDestroyed()) return;
+
+                if (result == null || result.isEmpty()) {
+                    // Tanzania returned nothing — fall back to global
+                    loadGlobalAgriculturalNews();
+                    return;
+                }
+
+                newsArticles.clear();
+                newsArticles.addAll(result);
+                newsAdapter.notifyDataSetChanged();
+                newsLoaded = true;
+            }
+
+            @Override
+            public void onError(String error) {
+                if (isFinishing() || isDestroyed()) return;
+                // Fall back to global agriculture news
+                loadGlobalAgriculturalNews();
+            }
+        });
+    }
+
+    private void loadGlobalAgriculturalNews() {
+        newsRepo.fetchAgricultureNews(null, new NewsRepository.NewsCallback() {
+            @Override
+            public void onSuccess(List<NewsDataResponse.NewsArticle> result) {
+                if (isFinishing() || isDestroyed()) return;
+
+                if (result == null || result.isEmpty()) {
+                    Toast.makeText(DashBoardActivity.this,
+                            "No agriculture news right now",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                newsArticles.clear();
+                newsArticles.addAll(result);
+                newsAdapter.notifyDataSetChanged();
+                newsLoaded = true;
+            }
+
+            @Override
+            public void onError(String error) {
+                if (isFinishing() || isDestroyed()) return;
+                Toast.makeText(DashBoardActivity.this,
+                        "News unavailable: " + error,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ==========================================
+    // LIFECYCLE
+    // ==========================================
     @Override
     protected void onResume() {
         super.onResume();
@@ -111,11 +211,9 @@ public class DashBoardActivity extends AppCompatActivity {
         String latestName = loadFirstName();
 
         if (currentDisplayName == null) {
-            // First launch of this screen — store and start
             currentDisplayName = latestName;
             runGreetingCycle(tvGreeting, currentDisplayName);
         } else if (!currentDisplayName.equals(latestName)) {
-            // Name changed — stop old loop and restart with new name
             currentDisplayName = latestName;
             typewriterHandler.removeCallbacksAndMessages(null);
             runGreetingCycle(tvGreeting, currentDisplayName);
@@ -123,33 +221,35 @@ public class DashBoardActivity extends AppCompatActivity {
 
         // ✅ Load (or refresh) the user's profile photo in the toolbar
         loadDashboardAvatar();
+
+        // Refresh news if it failed to load the first time
+        if (!newsLoaded && newsRepo != null) {
+            loadAgriculturalNews();
+        }
     }
 
     // ==========================================
-    // DASHBOARD AVATAR — load the real profile photo
+    // DASHBOARD AVATAR
     // ==========================================
     private void loadDashboardAvatar() {
         ImageView ivProfile = findViewById(R.id.iv_profile);
 
-        // Read the cached profile_photo_url from SharedPreferences
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String photoUrl = prefs.getString("profile_photo_url", "");
 
         if (photoUrl != null && !photoUrl.isEmpty()) {
-            // ✅ Real photo exists — load it with Glide
             Glide.with(this)
                     .load(photoUrl)
                     .placeholder(R.drawable.ic_account)
                     .circleCrop()
                     .into(ivProfile);
         } else {
-            // ⚙️ No photo yet — show the default icon
             ivProfile.setImageResource(R.drawable.ic_account);
         }
     }
 
     // ==========================================
-    // LOGOUT — confirm, clear session, clear back stack
+    // LOGOUT
     // ==========================================
     private void performLogout() {
         new AlertDialog.Builder(this)
@@ -157,12 +257,9 @@ public class DashBoardActivity extends AppCompatActivity {
                 .setMessage("You'll need to log in again to use Agrofast.")
                 .setPositiveButton("Log out", (dialog, which) -> {
 
-                    // 1. Clear Supabase session (user_id, tokens, etc.)
                     SupabaseAuthManager auth = new SupabaseAuthManager(this);
                     auth.logout();
 
-                    // 2. Also clear any legacy keys from the old signup system
-                    //    (safe to leave out later, but good hygiene now)
                     getSharedPreferences("agrofast_prefs", MODE_PRIVATE)
                             .edit()
                             .remove("is_logged_in")
@@ -172,7 +269,6 @@ public class DashBoardActivity extends AppCompatActivity {
                             .remove("location")
                             .apply();
 
-                    // 3. Navigate to Log in AND wipe the entire back stack
                     Intent intent = new Intent(this, Login.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -182,6 +278,7 @@ public class DashBoardActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
     private void setupDrawerItem(int viewId, Runnable action) {
         View row = findViewById(viewId);
         row.setOnClickListener(v -> {
@@ -190,18 +287,9 @@ public class DashBoardActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Reads the first name saved during Sign Up.
-     *
-     * IMPORTANT -- for this to actually show a real name, your SignUpActivity
-     * needs to save it when the account is created, e.g.:
-     *
-     *   SharedPreferences prefs = getSharedPreferences("agrofast_prefs", MODE_PRIVATE);
-     *   prefs.edit().putString("first_name", firstNameFromInputField).apply();
-     *
-     * Until that's wired up, this falls back to "there" so the greeting
-     * still reads naturally ("Good Afternoon there").
-     */
+    // ==========================================
+    // FIRST NAME
+    // ==========================================
     private String loadFirstName() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String fullOrFirstName = prefs.getString(KEY_FIRST_NAME, null);
@@ -210,17 +298,13 @@ public class DashBoardActivity extends AppCompatActivity {
             return "user";
         }
 
-        // In case a full name ever gets saved by mistake, only use the first word.
         String[] parts = fullOrFirstName.trim().split("\\s+");
         return parts[0];
     }
 
     // ============================================================
-    //  TYPEWRITER GREETING LOGIC (now loops forever)
-    //  Flow: type greeting -> pause -> delete -> pause ->
-    //        type question -> pause -> delete -> pause -> repeat
+    //  TYPEWRITER GREETING LOGIC
     // ============================================================
-
     private void runGreetingCycle(TextView tv, String name) {
         String greeting = getTimeBasedGreeting() + " " + name;
         String question = "What shall we do today?";
@@ -233,7 +317,7 @@ public class DashBoardActivity extends AppCompatActivity {
                                                                 typewriterHandler.postDelayed(() ->
                                                                                 deleteText(tv, () ->
                                                                                         typewriterHandler.postDelayed(() ->
-                                                                                                        runGreetingCycle(tv, name), // loop back to the start
+                                                                                                        runGreetingCycle(tv, name),
                                                                                                 PAUSE_AFTER_DELETING_MS)
                                                                                 ),
                                                                         PAUSE_AFTER_TYPING_MS)
@@ -294,8 +378,6 @@ public class DashBoardActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Stops the loop for good when the user leaves this screen --
-        // otherwise it would keep typing forever in the background.
         typewriterHandler.removeCallbacksAndMessages(null);
     }
 

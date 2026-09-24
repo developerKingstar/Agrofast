@@ -203,15 +203,35 @@ public class UserProfileViewerActivity extends AppCompatActivity {
     }
 
     private void updateFavouriteButton() {
+
+        // colorOnPrimary: defined by Material 3 theme
+        android.util.TypedValue onPrimaryTv = new android.util.TypedValue();
+        getTheme().resolveAttribute(
+                com.google.android.material.R.attr.colorOnPrimary,
+                onPrimaryTv,
+                true
+        );
+
+        // colorPrimary: defined by AppCompat (backported from framework)
+        android.util.TypedValue primaryTv = new android.util.TypedValue();
+        getTheme().resolveAttribute(
+                androidx.appcompat.R.attr.colorPrimary,
+                primaryTv,
+                true
+        );
+
+        int bgColor   = onPrimaryTv.data;   // white (light) / black (dark)
+        int textColor = primaryTv.data;     // green (light) / yellowish-green (dark)
+
         if (isFavourited) {
             btnToggleFavourite.setText("♥ Remove from Favourites");
-            btnToggleFavourite.setBackgroundTintList(
-                    android.content.res.ColorStateList.valueOf(0xFFB71C1C));
         } else {
             btnToggleFavourite.setText("♡ Add to Favourites");
-            btnToggleFavourite.setBackgroundTintList(
-                    android.content.res.ColorStateList.valueOf(0xFF2E7D32));
         }
+
+        btnToggleFavourite.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(bgColor));
+        btnToggleFavourite.setTextColor(textColor);
     }
 
     private void toggleFavourite() {

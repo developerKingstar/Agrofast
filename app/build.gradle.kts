@@ -1,9 +1,24 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
 
+// ---------- Read local.properties ----------
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
 android {
     namespace = "com.example.agrofastsolutions"
+
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileSdk {
         version = release(37)
     }
@@ -14,8 +29,13 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "NEWSDATA_API_KEY",
+            "\"${localProperties["newsdata_api_key"] ?: ""}\""
+        )
     }
 
     buildTypes {
@@ -36,27 +56,28 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
-    implementation("com.airbnb.android:lottie:6.3.0")
+    implementation(libs.lottie)
+    implementation(libs.swiperefreshlayout)
 
-        // Retrofit for API calls
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
+    // Retrofit for API calls
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.converter.gson)
+    implementation(libs.retrofit2.adapter.rxjava2)
 
-        // OkHttp for logging
-    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    // OkHttp for logging
+    implementation(libs.okhttp)
+    implementation(libs.okhttp3.logging.interceptor)
 
-        // Gson for JSON parsing
-    implementation ("com.google.code.gson:gson:2.10.1")
+    // Gson for JSON parsing
+    implementation(libs.gson)
 
-        // LiveData and ViewModel
-    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
-    implementation ("androidx.lifecycle:lifecycle-livedata:2.6.2")
+    // LiveData and ViewModel
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.livedata)
 
-        // Glide for image loading
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    // Glide for image loading
+    implementation(libs.github.glide)
+    annotationProcessor(libs.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)

@@ -3,30 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F4">
+    android:background="?android:attr/colorBackground">
 
-    <!-- Header -->
     <TextView
         android:id="@+id/tvMyListingsTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="#2E2D32"
+        android:background="?attr/colorPrimary"
         android:paddingHorizontal="20dp"
         android:paddingVertical="20dp"
         android:text="My Listings"
-        android:textColor="#FFFFFF"
+        android:textColor="?attr/colorOnPrimary"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <!-- Content area -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tvMyListingsTitle"
         android:layout_marginTop="8dp">
 
-        <!-- RecyclerView (the actual list) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewMyListings"
             android:layout_width="match_parent"
@@ -34,7 +31,6 @@
             android:padding="6dp"
             android:clipToPadding="false" />
 
-        <!-- Loading spinner -->
         <ProgressBar
             android:id="@+id/progressBarMyListings"
             android:layout_width="wrap_content"
@@ -42,7 +38,6 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <!-- Empty state -->
         <TextView
             android:id="@+id/tvEmptyMyListings"
             android:layout_width="wrap_content"
@@ -50,7 +45,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="You haven't published any listings yet"
-            android:textColor="#666666"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="16sp"
             android:visibility="gone" />
 

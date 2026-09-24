@@ -4,19 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FAFAFA">
+    android:background="?android:attr/colorBackground">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarFavourites"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#2E7D32"
+        android:background="?attr/colorPrimary"
         app:title="Favourites"
-        app:titleTextColor="@android:color/white"
-        app:navigationIcon="@android:drawable/ic_menu_revert" />
+        app:titleTextColor="?attr/colorOnPrimary"
+        app:navigationIcon="@android:drawable/ic_menu_revert"
+        app:navigationIconTint="?attr/colorOnPrimary" />
 
-    <!-- Search bar -->
     <EditText
         android:id="@+id/etSearchUsers"
         android:layout_width="match_parent"
@@ -25,13 +24,12 @@
         android:hint="Search people by name…"
         android:padding="12dp"
         android:background="@drawable/bg_review_input"
-        android:textColorHint="#9E9E9E"
-        android:textColor="#1B1B1B"
+        android:textColorHint="?android:attr/textColorSecondary"
+        android:textColor="?android:attr/textColorPrimary"
         android:singleLine="true"
         android:imeOptions="actionSearch"
         android:inputType="textPersonName" />
 
-    <!-- Section label -->
     <TextView
         android:id="@+id/tvSectionLabel"
         android:layout_width="match_parent"
@@ -41,7 +39,7 @@
         android:text="My Favourites"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="#424242" />
+        android:textColor="?android:attr/textColorPrimary" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -69,7 +67,7 @@
             android:layout_gravity="center"
             android:text="No favourites yet.\nSearch above to add people."
             android:textSize="15sp"
-            android:textColor="#757575"
+            android:textColor="?android:attr/textColorSecondary"
             android:gravity="center"
             android:visibility="gone" />
     </FrameLayout>

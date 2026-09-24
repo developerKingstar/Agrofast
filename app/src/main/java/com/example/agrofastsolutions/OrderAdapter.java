@@ -14,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.agrofastsolutions.repository.AgrofastRepository;
-import com.example.agrofastsolutions.util.DevLogger;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
@@ -25,29 +23,45 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     private List<Order> orders;
     private OnOrderClickListener listener;
     private OnOrderActionListener actionListener;
+    private OnOrderSettledListener settledListener;
 
-    // Click on whole card
+    // ---------- Interfaces ----------
     public interface OnOrderClickListener {
         void onOrderClick(Order order);
     }
 
-    // Click on Settle / Decline buttons
     public interface OnOrderActionListener {
         void onSettle(Order order);
         void onDecline(Order order, String reason, double feeAmount);
     }
 
-    // Constructor (backward compatible)
-    public OrderAdapter(List<Order> orders, OnOrderClickListener listener) {
-        this(orders, listener, null);
+    public interface OnOrderSettledListener {
+        void onOrderSettled(Order order);
     }
 
+    // ---------- Constructors ----------
+
+    // Full constructor
     public OrderAdapter(List<Order> orders,
                         OnOrderClickListener listener,
-                        OnOrderActionListener actionListener) {
+                        OnOrderActionListener actionListener,
+                        OnOrderSettledListener settledListener) {
         this.orders = orders;
         this.listener = listener;
         this.actionListener = actionListener;
+        this.settledListener = settledListener;
+    }
+
+    // 3-arg — no settled listener
+    public OrderAdapter(List<Order> orders,
+                        OnOrderClickListener listener,
+                        OnOrderActionListener actionListener) {
+        this(orders, listener, actionListener, null);
+    }
+
+    // 2-arg — click only
+    public OrderAdapter(List<Order> orders, OnOrderClickListener listener) {
+        this(orders, listener, null, null);
     }
 
     @NonNull
@@ -61,7 +75,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orders.get(position);
-        holder.bind(order, listener, actionListener);
+        holder.bind(order, listener, actionListener, settledListener);
     }
 
     @Override
@@ -69,37 +83,43 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         return orders.size();
     }
 
+    // ================================================================
+    //  VIEW HOLDER
+    // ================================================================
     static class OrderViewHolder extends RecyclerView.ViewHolder {
+
         private ImageView imgCrop;
         private TextView tvCropType, tvBuyer, tvSeller, tvQuantity, tvPrice, tvStatus, tvNote;
         private TextView tvOrderContact;
-
-        private TextView tvDeclineInfo;       // ✅ NEW
-        private TextView tvGraceInfo;         // ✅ NEW
+        private TextView tvDeclineInfo;
+        private TextView tvGraceInfo;
         private LinearLayout orderActionButtons;
         private MaterialButton btnSettle, btnDeclineOrder;
 
-
-
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgCrop             = itemView.findViewById(R.id.imgOrderCrop);
-            tvCropType          = itemView.findViewById(R.id.tvOrderCropType);
-            tvBuyer             = itemView.findViewById(R.id.tvOrderBuyer);
-            tvSeller            = itemView.findViewById(R.id.tvOrderSeller);
-            tvQuantity          = itemView.findViewById(R.id.tvOrderQuantity);
-            tvPrice             = itemView.findViewById(R.id.tvOrderPrice);
-            tvStatus            = itemView.findViewById(R.id.tvOrderStatus);
-            tvNote              = itemView.findViewById(R.id.tvOrderNote);
-            tvOrderContact      = itemView.findViewById(R.id.tvOrderContact);
-            tvDeclineInfo       = itemView.findViewById(R.id.tvDeclineInfo);
-            tvGraceInfo         = itemView.findViewById(R.id.tvGraceInfo);
-            orderActionButtons  = itemView.findViewById(R.id.orderActionButtons);
-            btnSettle           = itemView.findViewById(R.id.btnSettle);
-            btnDeclineOrder     = itemView.findViewById(R.id.btnDeclineOrder);
+            imgCrop            = itemView.findViewById(R.id.imgOrderCrop);
+            tvCropType         = itemView.findViewById(R.id.tvOrderCropType);
+            tvBuyer            = itemView.findViewById(R.id.tvOrderBuyer);
+            tvSeller           = itemView.findViewById(R.id.tvOrderSeller);
+            tvQuantity         = itemView.findViewById(R.id.tvOrderQuantity);
+            tvPrice            = itemView.findViewById(R.id.tvOrderPrice);
+            tvStatus           = itemView.findViewById(R.id.tvOrderStatus);
+            tvNote             = itemView.findViewById(R.id.tvOrderNote);
+            tvOrderContact     = itemView.findViewById(R.id.tvOrderContact);
+            tvDeclineInfo      = itemView.findViewById(R.id.tvDeclineInfo);
+            tvGraceInfo        = itemView.findViewById(R.id.tvGraceInfo);
+            orderActionButtons = itemView.findViewById(R.id.orderActionButtons);
+            btnSettle          = itemView.findViewById(R.id.btnSettle);
+            btnDeclineOrder    = itemView.findViewById(R.id.btnDeclineOrder);
         }
 
-        public void bind(Order order, OnOrderClickListener listener, OnOrderActionListener actionListener) {
+        public void bind(Order order,
+                         OnOrderClickListener listener,
+                         OnOrderActionListener actionListener,
+                         OnOrderSettledListener settledListener) {
+
+            // ---------- Basic fields ----------
             tvCropType.setText(order.getCropType() != null ? order.getCropType() : "Crop");
             tvBuyer.setText("Buyer: " + (order.getBuyerName() != null ? order.getBuyerName() : "—"));
             tvSeller.setText("Seller: " + (order.getSellerName() != null ? order.getSellerName() : "—"));
@@ -108,14 +128,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             tvStatus.setText(order.getStatus() != null ? order.getStatus().toUpperCase() : "—");
             tvNote.setText(order.getNote() != null ? order.getNote() : "");
 
-            // ==========================================
-            // CONTACT REVEAL — labeled Buyer / Seller
-            // ==========================================
+            // ---------- Contact reveal ----------
             String buyerPhone  = order.getBuyerPhone();
             String sellerPhone = order.getSellerPhone();
-
-            boolean hasBuyer  = (buyerPhone  != null && !buyerPhone.isEmpty());
-            boolean hasSeller = (sellerPhone != null && !sellerPhone.isEmpty());
+            boolean hasBuyer   = buyerPhone  != null && !buyerPhone.isEmpty();
+            boolean hasSeller  = sellerPhone != null && !sellerPhone.isEmpty();
 
             if (hasBuyer || hasSeller) {
                 StringBuilder contactText = new StringBuilder();
@@ -147,17 +164,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 tvOrderContact.setVisibility(View.GONE);
             }
 
-            // ==========================================
-            // DECLINED INFO — reason + fee (or grace-period note)
-            // ==========================================
+            // ---------- Declined info ----------
             boolean isDeclined = "declined".equalsIgnoreCase(order.getStatus());
-
             if (isDeclined) {
-                String reason = order.getDeclineReason();
-                double fee = order.getDeclineFeeAmount();
+                String reason    = order.getDeclineReason();
+                double fee       = order.getDeclineFeeAmount();
                 String feeStatus = order.getDeclineFeeStatus();
 
-                // --- Decline info box (always shown for declined) ---
                 StringBuilder info = new StringBuilder();
                 info.append("📋 Reason: ")
                         .append(reason != null && !reason.isEmpty() ? reason : "—");
@@ -175,7 +188,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 tvDeclineInfo.setText(info.toString());
                 tvDeclineInfo.setVisibility(View.VISIBLE);
 
-                // --- Grace-period note (only when no fee was charged) ---
                 if (fee <= 0) {
                     tvGraceInfo.setText("✅ No fee — declined within 24h grace period");
                     tvGraceInfo.setVisibility(View.VISIBLE);
@@ -187,17 +199,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 tvGraceInfo.setVisibility(View.GONE);
             }
 
-
-            // ==========================================
-            // ACTION BUTTONS — show only when status = "confirmed"
-            // ==========================================
+            // ---------- Action buttons ----------
             boolean isConfirmed = "confirmed".equalsIgnoreCase(order.getStatus());
 
             if (isConfirmed && actionListener != null) {
                 orderActionButtons.setVisibility(View.VISIBLE);
 
-                // SETTLE button
-                // SETTLE button
                 btnSettle.setOnClickListener(v -> {
                     new AlertDialog.Builder(v.getContext())
                             .setTitle("Mark order as settled?")
@@ -206,51 +213,44 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                                 if (actionListener != null) {
                                     actionListener.onSettle(order);
                                 }
-                                // Show the follow-up popup a beat later, so the user sees the state change
-                                v.postDelayed(() -> showPostSettlePopup(v, order), 600);
+                                if (settledListener != null) {
+                                    settledListener.onOrderSettled(order);
+                                }
                             })
                             .setNegativeButton("Cancel", null)
                             .show();
                 });
-                // DECLINE button
-                btnDeclineOrder.setOnClickListener(v -> showDeclineDialog(v, order, actionListener));
+
+                btnDeclineOrder.setOnClickListener(v ->
+                        showDeclineDialog(v, order, actionListener));
             } else {
                 orderActionButtons.setVisibility(View.GONE);
                 btnSettle.setOnClickListener(null);
                 btnDeclineOrder.setOnClickListener(null);
             }
 
-            // Status color
+            // ---------- Status pill ----------
             if (order.getStatus() != null) {
-                switch (order.getStatus()) {
-                    case "confirmed":
-                        tvStatus.setBackgroundResource(R.drawable.status_accepted);
-                        tvStatus.setTextColor(0xFF0C447C);
-                        break;
-                    case "completed":
-                        tvStatus.setBackgroundResource(R.drawable.status_completed);
-                        tvStatus.setTextColor(0xFF27500A);
-                        break;
-                    case "declined":
-                        tvStatus.setBackgroundResource(R.drawable.status_declined);
-                        tvStatus.setTextColor(0xFFB71C1C);
-                        break;
-                    default:
-                        tvStatus.setBackgroundResource(R.drawable.status_default);
-                        tvStatus.setTextColor(0xFF4E342E);
-                        break;
-                }
+                android.util.TypedValue tv = new android.util.TypedValue();
+                itemView.getContext().getTheme().resolveAttribute(
+                        com.google.android.material.R.attr.colorOnPrimary,
+                        tv,
+                        true
+                );
+                int onPrimary = tv.data;
+                tvStatus.setBackgroundResource(R.drawable.pill_translucent);
+                tvStatus.setTextColor(onPrimary);
             }
 
+            // ---------- Crop image ----------
             imgCrop.setImageResource(getCropIcon(order.getCropType()));
+
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onOrderClick(order);
             });
         }
 
-        // ==========================================
-        // DECLINE DIALOG — reason + auto grace period check
-        // ==========================================
+        // ---------- Decline dialog ----------
         private void showDeclineDialog(View v, Order order, OnOrderActionListener actionListener) {
             final String[] reasons = {
                     "Price not agreed",
@@ -275,94 +275,18 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                     .show();
         }
 
-        // ==========================================
-        // POST-SETTLE POPUP — offer Review + Favourite
-        // ==========================================
-        private void showPostSettlePopup(View v, Order order) {
-
-            // Who is the "other party"?
-            android.content.Context ctx = v.getContext();
-            android.content.SharedPreferences prefs =
-                    ctx.getSharedPreferences("agrofast_prefs", android.content.Context.MODE_PRIVATE);
-            String currentUserId = prefs.getString("user_id", "");
-
-            boolean iAmBuyer = currentUserId != null
-                    && currentUserId.equals(order.getBuyerId());
-
-            String otherUserId = iAmBuyer ? order.getSellerUserId() : order.getBuyerUserId();
-            String otherName   = iAmBuyer ? order.getSellerName()   : order.getBuyerName();
-            if (otherName == null || otherName.isEmpty()) otherName = "the other party";
-
-            final String finalOtherId   = otherUserId;
-            final String finalOtherName = otherName;
-
-            new AlertDialog.Builder(v.getContext())
-                    .setTitle("Order settled! 🎉")
-                    .setMessage("Would you like to rate " + finalOtherName + " or add them to favourites?")
-                    .setPositiveButton("⭐ Rate", (d, w) -> {
-                        if (finalOtherId == null || finalOtherId.isEmpty()) {
-                            Toast.makeText(v.getContext(),
-                                    "Could not identify the other party",
-                                    Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        if (v.getContext() instanceof androidx.fragment.app.FragmentActivity) {
-                            ReviewDialog dialog = ReviewDialog.newInstance(
-                                    order.getOrderId(), finalOtherId, finalOtherName);
-                            dialog.show(((androidx.fragment.app.FragmentActivity) v.getContext())
-                                    .getSupportFragmentManager(), "review_dialog");
-                        }
-                    })
-                    .setNeutralButton("❤️ Favourite", (d, w) -> {
-                        if (finalOtherId == null || finalOtherId.isEmpty()) {
-                            Toast.makeText(v.getContext(),
-                                    "Could not identify the other party",
-                                    Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        AgrofastRepository repo = new AgrofastRepository(v.getContext());
-                        repo.addFavourite(finalOtherId, new AgrofastRepository.DataCallback<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Toast.makeText(v.getContext(),
-                                        finalOtherName + " added to favourites ❤️",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                DevLogger.logError("OrderAdapter favourite", error, null);
-                                Toast.makeText(v.getContext(),
-                                        DevLogger.toUserMessage(error),
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    })
-                    .setNegativeButton("Skip", null)
-                    .show();
-        }
-
-        // ==========================================
-        // GRACE PERIOD + NUISANCE FEE
-        //   Rule:
-        //     - ≤ 24h since accepted_at → fee = 0
-        //     - > 24h since accepted_at → fee = 10% of (price × qty)
-        //   NOTE: calculated client-side (acceptable for demo).
-        // ==========================================
-        private static final long GRACE_PERIOD_MS = 24L * 60 * 60 * 1000;  // 24 hours
-        private static final double NUISANCE_FEE_RATE = 0.10;              // ✅ 10%
+        // ---------- Fee calculation ----------
+        private static final long GRACE_PERIOD_MS = 24L * 60 * 60 * 1000;
+        private static final double NUISANCE_FEE_RATE = 0.10;
 
         private double calculateFee(Order order) {
             if (order.getAcceptedAt() == null) {
-                android.util.Log.d("OrderAdapter",
-                        "calculateFee: no accepted_at → fee = 0");
+                android.util.Log.d("OrderAdapter", "calculateFee: no accepted_at → fee = 0");
                 return 0;
             }
-
             try {
-                // Supabase sends ISO 8601: "2026-09-21T14:30:00.123456+00:00"
                 String iso = order.getAcceptedAt();
-                if (iso.length() > 19) iso = iso.substring(0, 19);   // trim to fit pattern
+                if (iso.length() > 19) iso = iso.substring(0, 19);
 
                 java.text.SimpleDateFormat sdf =
                         new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss",
@@ -371,37 +295,28 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
                 java.util.Date accepted = sdf.parse(iso);
                 if (accepted == null) {
-                    android.util.Log.d("OrderAdapter",
-                            "calculateFee: unparseable accepted_at → fee = 0");
+                    android.util.Log.d("OrderAdapter", "calculateFee: unparseable → fee = 0");
                     return 0;
                 }
 
                 long elapsedMs = System.currentTimeMillis() - accepted.getTime();
                 long hoursElapsed = elapsedMs / (1000L * 60 * 60);
 
-                boolean withinGrace = elapsedMs <= GRACE_PERIOD_MS;
-
-                if (withinGrace) {
+                if (elapsedMs <= GRACE_PERIOD_MS) {
                     android.util.Log.d("OrderAdapter",
-                            "calculateFee: " + hoursElapsed +
-                                    "h elapsed → within 24h grace → fee = 0");
+                            "calculateFee: " + hoursElapsed + "h → within grace → fee = 0");
                     return 0;
                 }
 
-                // ✅ 10% of order value
                 double orderValue = order.getPrice() * order.getQuantity();
                 double fee = orderValue * NUISANCE_FEE_RATE;
 
                 android.util.Log.d("OrderAdapter",
-                        "calculateFee: " + hoursElapsed + "h elapsed → past grace → " +
-                                "orderValue = TSh " + orderValue +
-                                " → 10% fee = TSh " + fee);
-
+                        "calculateFee: " + hoursElapsed + "h → past grace → fee = TSh " + fee);
                 return fee;
 
             } catch (Exception e) {
-                android.util.Log.e("OrderAdapter",
-                        "calculateFee: parse error → fee = 0", e);
+                android.util.Log.e("OrderAdapter", "calculateFee: parse error → fee = 0", e);
                 return 0;
             }
         }
@@ -412,8 +327,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 dial.setData(Uri.parse("tel:" + phone));
                 v.getContext().startActivity(dial);
             } catch (Exception e) {
-                Toast.makeText(v.getContext(),
-                        "Could not open dialer", Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), "Could not open dialer", Toast.LENGTH_SHORT).show();
             }
         }
 

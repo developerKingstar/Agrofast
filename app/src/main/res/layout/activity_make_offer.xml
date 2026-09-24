@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="26dp"
-    android:background="#F6F8F4">
+    android:background="?android:attr/colorBackground">
 
     <ImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:src="@android:drawable/ic_input_add"
-        app:tint="#2E7D32" />
+        app:tint="?attr/colorPrimary" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,11 +20,10 @@
         android:layout_gravity="center"
         android:layout_marginTop="18dp"
         android:text="Make Your Offer"
-        android:textColor="#1B5E20"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="25sp"
         android:textStyle="bold" />
 
-    <!-- Shows which crop + seller -->
     <TextView
         android:id="@+id/tvOfferContext"
         android:layout_width="match_parent"
@@ -32,44 +31,46 @@
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="—"
-        android:textColor="#666666"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp" />
 
-    <!-- Quantity -->
     <EditText
         android:id="@+id/etOfferQuantity"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="35dp"
+        android:background="@drawable/input_background"
         android:hint="Quantity Required (kg)"
         android:inputType="numberDecimal"
         android:padding="15dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textColorHint="?android:attr/textColorHint"
         android:autofillHints="none" />
 
-    <!-- Offered price -->
     <EditText
         android:id="@+id/etOfferPrice"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="15dp"
+        android:background="@drawable/input_background"
         android:hint="Your Offered Price per kg (Optional)"
         android:inputType="numberDecimal"
         android:padding="15dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textColorHint="?android:attr/textColorHint"
         android:autofillHints="none" />
 
-    <!-- Send button -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSendOffer"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="30dp"
-        android:backgroundTint="#2E7D32"
         android:text="SEND OFFER"
-        android:textColor="#FFFFFF"
+        android:textColor="?attr/colorOnPrimary"
         android:textStyle="bold"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:cornerRadius="12dp"/>
 
-    <!-- Progress indicator -->
     <ProgressBar
         android:id="@+id/progressBarOffer"
         android:layout_width="wrap_content"
@@ -78,14 +79,15 @@
         android:layout_marginTop="16dp"
         android:visibility="gone" />
 
-    <!-- Cancel button -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancelOffer"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginTop="10dp"
-        android:backgroundTint="#EEEEEE"
         android:text="Cancel"
-        android:textColor="#444441" />
+        android:textColor="?android:attr/textColorPrimary"
+        app:cornerRadius="12dp"
+        app:strokeColor="?android:attr/textColorSecondary"/>
 
 </LinearLayout>

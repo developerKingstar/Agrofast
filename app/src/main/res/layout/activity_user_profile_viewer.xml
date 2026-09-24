@@ -4,16 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FAFAFA">
+    android:background="?android:attr/colorBackground">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarUserProfile"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#2E7D32"
+        android:background="?attr/colorPrimary"
         app:title="Profile"
-        app:titleTextColor="@android:color/white"
-        app:navigationIcon="@android:drawable/ic_menu_revert" />
+        app:titleTextColor="?attr/colorOnPrimary"
+        app:navigationIcon="@android:drawable/ic_menu_revert"
+        app:navigationIconTint="?attr/colorOnPrimary" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,96 +27,107 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Header card -->
-            <LinearLayout
+            <!-- Header card — green/yellowish-green -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:padding="24dp"
-                android:background="@android:color/white"
-                android:layout_marginBottom="8dp">
-
-                <ImageView
-                    android:id="@+id/ivUserPhoto"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:src="@drawable/ic_account"
-                    android:contentDescription="Profile photo"
-                    android:background="@drawable/bg_circle_placeholder" />
-
-                <TextView
-                    android:id="@+id/tvUserName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="User Name"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#1B1B1B" />
-
-                <TextView
-                    android:id="@+id/tvUserLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Location"
-                    android:textSize="14sp"
-                    android:textColor="#757575" />
+                android:layout_margin="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="?attr/colorPrimary">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/tvUserRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="★ 0.0"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#F5A623" />
-
-                    <TextView
-                        android:id="@+id/tvUserReviewCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="(0 reviews)"
-                        android:textSize="14sp"
-                        android:textColor="#757575" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvUserMemberSince"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Member since —"
-                    android:textSize="12sp"
-                    android:textColor="#9E9E9E" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnToggleFavourite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="♡ Add to Favourites"
-                    android:backgroundTint="#2E7D32"
-                    android:textColor="@android:color/white" />
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="24dp">
 
-                <ProgressBar
-                    android:id="@+id/progressUserProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:visibility="gone" />
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/ivUserPhoto"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:src="@drawable/ic_account"
+                        android:contentDescription="Profile photo"
+                        android:background="@drawable/bg_circle_placeholder" />
 
-            <!-- Reviews header -->
+                    <TextView
+                        android:id="@+id/tvUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="User Name"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvUserLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Location"
+                        android:textSize="14sp"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:alpha="0.85" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tvUserRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="★ 0.0"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnPrimary" />
+
+                        <TextView
+                            android:id="@+id/tvUserReviewCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="(0 reviews)"
+                            android:textSize="14sp"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:alpha="0.85" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvUserMemberSince"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Member since —"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:alpha="0.7" />
+
+                    <!-- Favourite button — invert so it pops on green card -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnToggleFavourite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="♡ Add to Favourites"
+                        app:backgroundTint="?attr/colorOnPrimary"
+                        android:textColor="?attr/colorPrimary" />
+
+                    <ProgressBar
+                        android:id="@+id/progressUserProfile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Reviews header (outside cards) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -124,7 +136,7 @@
                 android:text="Reviews"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#424242" />
+                android:textColor="?android:attr/textColorPrimary" />
 
             <TextView
                 android:id="@+id/tvEmptyReviews"
@@ -134,7 +146,7 @@
                 android:gravity="center"
                 android:text="No reviews yet"
                 android:textSize="14sp"
-                android:textColor="#9E9E9E"
+                android:textColor="?android:attr/textColorSecondary"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView

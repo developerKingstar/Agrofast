@@ -10,14 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class MyListingAdapter extends RecyclerView.Adapter<MyListingAdapter.MyListingViewHolder> {
 
-    private List<Listing> listings;
-    private OnMyListingClickListener listener;
+    private final List<Listing> listings;
+    private final OnMyListingClickListener listener;
 
-    // ===== Click callback =====
     public interface OnMyListingClickListener {
         void onMyListingClick(Listing listing);
     }
@@ -46,40 +47,35 @@ public class MyListingAdapter extends RecyclerView.Adapter<MyListingAdapter.MyLi
         return listings.size();
     }
 
-    // ===== ViewHolder =====
     static class MyListingViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imgMyListing;
-        private TextView tvMyCrop, tvMyQty, tvMyLocation, tvMyStatus, tvMyPrice;
+        private final ImageView imgMyListing;
+        private final TextView tvMyCrop, tvMyQty, tvMyLocation, tvMyStatus, tvMyPrice;
 
         public MyListingViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgMyListing  = itemView.findViewById(R.id.imgMyListing);
-            tvMyCrop      = itemView.findViewById(R.id.tvMyCrop);
-            tvMyQty       = itemView.findViewById(R.id.tvMyQty);
-            tvMyLocation  = itemView.findViewById(R.id.tvMyLocation);
-            tvMyStatus    = itemView.findViewById(R.id.tvMyStatus);
-            tvMyPrice     = itemView.findViewById(R.id.tvMyPrice);
+            imgMyListing = itemView.findViewById(R.id.imgMyListing);
+            tvMyCrop     = itemView.findViewById(R.id.tvMyCrop);
+            tvMyQty      = itemView.findViewById(R.id.tvMyQty);
+            tvMyLocation = itemView.findViewById(R.id.tvMyLocation);
+            tvMyStatus   = itemView.findViewById(R.id.tvMyStatus);
+            tvMyPrice    = itemView.findViewById(R.id.tvMyPrice);
         }
 
         public void bind(Listing listing, OnMyListingClickListener listener) {
 
-            // Crop
             tvMyCrop.setText(listing.getCropType() != null
                     ? listing.getCropType() : "Crop");
 
-            // Quantity + unit
             String unit = (listing.getUnit() != null) ? listing.getUnit() : "kg";
             tvMyQty.setText("Qty: " + formatNumber(listing.getQuantityAvailable()) + " " + unit);
 
-            // Location
             tvMyLocation.setText("📍 " + (listing.getLocation() != null
                     ? listing.getLocation() : "Unknown"));
 
-            // Price
             tvMyPrice.setText("TSh " + formatNumber(listing.getAskingPrice()) + "/" + unit);
 
-            // Status badge + color
+            // ===== Status badge =====
             String status = listing.getStatus() != null
                     ? listing.getStatus().toLowerCase() : "active";
             tvMyStatus.setText(status.toUpperCase());
@@ -87,15 +83,15 @@ public class MyListingAdapter extends RecyclerView.Adapter<MyListingAdapter.MyLi
             switch (status) {
                 case "active":
                     tvMyStatus.setBackgroundResource(R.drawable.status_completed);
-                    tvMyStatus.setTextColor(Color.parseColor("#27500A")); // green
+                    tvMyStatus.setTextColor(Color.parseColor("#27500A"));
                     break;
                 case "fulfilled":
                     tvMyStatus.setBackgroundResource(R.drawable.status_accepted);
-                    tvMyStatus.setTextColor(Color.parseColor("#0C447C")); // blue
+                    tvMyStatus.setTextColor(Color.parseColor("#0C447C"));
                     break;
                 case "expired":
                     tvMyStatus.setBackgroundResource(R.drawable.status_declined);
-                    tvMyStatus.setTextColor(Color.parseColor("#B71C1C")); // red
+                    tvMyStatus.setTextColor(Color.parseColor("#B71C1C"));
                     break;
                 default:
                     tvMyStatus.setBackgroundResource(R.drawable.status_default);
@@ -103,29 +99,35 @@ public class MyListingAdapter extends RecyclerView.Adapter<MyListingAdapter.MyLi
                     break;
             }
 
-            // Fade inactive listings slightly
             if ("expired".equalsIgnoreCase(status) || "fulfilled".equalsIgnoreCase(status)) {
                 itemView.setAlpha(0.55f);
             } else {
                 itemView.setAlpha(1.0f);
             }
 
-            // Crop icon
-            imgMyListing.setImageResource(getCropIcon(listing.getCropType()));
+            // ===== Photo load =====
+            String photoUrl = listing.getFirstPhotoUrl();
+            if (photoUrl != null && !photoUrl.isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(photoUrl)
+                        .placeholder(getCropIcon(listing.getCropType()))
+                        .error(getCropIcon(listing.getCropType()))
+                        .centerCrop()
+                        .into(imgMyListing);
+            } else {
+                imgMyListing.setImageResource(getCropIcon(listing.getCropType()));
+            }
 
-            // Whole card is clickable
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onMyListingClick(listing);
             });
         }
 
-        // Format 500.0 → "500", 500.5 → "500.5"
         private String formatNumber(double value) {
             if (value == (long) value) return String.valueOf((long) value);
             return String.valueOf(value);
         }
 
-        // Crop icon placeholder
         private int getCropIcon(String cropType) {
             if (cropType == null) return android.R.drawable.ic_menu_gallery;
             switch (cropType.toLowerCase()) {

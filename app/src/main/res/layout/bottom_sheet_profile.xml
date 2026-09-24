@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="?attr/colorSurface">
 
-    <!-- Profile photo + small camera badge, tap either to change it -->
     <FrameLayout
         android:layout_width="90dp"
         android:layout_height="90dp"
@@ -29,6 +29,7 @@
         android:layout_gravity="center_horizontal"
         android:textStyle="bold"
         android:textSize="18sp"
+        android:textColor="?android:attr/textColorPrimary"
         android:text="" />
 
     <TextView
@@ -37,17 +38,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:textColor="#888888"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="13sp"
         android:text="" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#DDDDDD"
+        android:background="?android:attr/textColorSecondary"
+        android:alpha="0.3"
         android:layout_marginBottom="8dp" />
 
-    <!-- Change Password row -->
     <LinearLayout
         android:id="@+id/row_change_password"
         android:layout_width="match_parent"
@@ -62,17 +63,19 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:src="@android:drawable/ic_lock_idle_lock"
-            android:contentDescription="Change password" />
+            android:contentDescription="Change password"
+            app:tint="?android:attr/textColorPrimary"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="Change Password"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textColor="?android:attr/textColorPrimary" />
     </LinearLayout>
 
-    <!-- Edit Details row -->
     <LinearLayout
         android:id="@+id/row_edit_details"
         android:layout_width="match_parent"
@@ -87,14 +90,17 @@
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:src="@android:drawable/ic_menu_edit"
-            android:contentDescription="Edit details" />
+            android:contentDescription="Edit details"
+            app:tint="?android:attr/textColorPrimary"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="Edit Details"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textColor="?android:attr/textColorPrimary" />
     </LinearLayout>
 
 </LinearLayout>

@@ -31,6 +31,8 @@ public class PendingFragment extends Fragment implements Show_order.FilterableFr
     private List<Order> filteredOrders = new ArrayList<>();
     private AgrofastRepository repository;
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,6 +60,14 @@ public class PendingFragment extends Fragment implements Show_order.FilterableFr
                     public void onDecline(Order order, String reason, double feeAmount) {
                         handleDecline(order, reason, feeAmount);
                     }
+                },
+                new OrderAdapter.OnOrderSettledListener() {
+                    @Override
+                    public void onOrderSettled(Order order) {
+                        // Small delay so the network PATCH completes first
+                        new android.os.Handler(android.os.Looper.getMainLooper())
+                                .postDelayed(() -> showPostSettlePopup(order), 800);
+                    }
                 }
         );
         recyclerView.setAdapter(adapter);
@@ -65,6 +75,79 @@ public class PendingFragment extends Fragment implements Show_order.FilterableFr
         loadActiveOrders();
 
         return view;
+    }
+
+    private void showPostSettlePopup(Order order) {
+
+        if (!isAdded() || getActivity() == null) return;
+
+        android.content.SharedPreferences prefs =
+                requireActivity().getSharedPreferences("agrofast_prefs",
+                        android.content.Context.MODE_PRIVATE);
+        String currentUserId = prefs.getString("user_id", "");
+
+        boolean iAmBuyer = currentUserId != null && currentUserId.equals(order.getBuyerId());
+        String otherUserId = iAmBuyer ? order.getSellerUserId() : order.getBuyerUserId();
+        String otherName   = iAmBuyer ? order.getSellerName()   : order.getBuyerName();
+        if (otherName == null || otherName.isEmpty()) otherName = "the other party";
+
+        final String finalOtherId   = otherUserId;
+        final String finalOtherName = otherName;
+
+        new androidx.appcompat.app.AlertDialog.Builder(requireActivity())
+                .setTitle("Order settled! 🎉")
+                .setMessage("Would you like to rate " + finalOtherName + " or add them to favourites?")
+                .setPositiveButton("⭐ Rate", (d, w) -> {
+                    if (finalOtherId == null || finalOtherId.isEmpty()) {
+                        Toast.makeText(getContext(),
+                                "Could not identify the other party",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!isAdded()) return;
+
+                    androidx.fragment.app.FragmentManager fm = getParentFragmentManager();
+                    if (fm.isStateSaved()) {
+                        Toast.makeText(getContext(),
+                                "Please try again in a moment",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    ReviewDialog dialog = ReviewDialog.newInstance(
+                            order.getOrderId(), finalOtherId, finalOtherName);
+                    dialog.show(fm, "review_dialog");
+                })
+                .setNeutralButton("❤️ Favourite", (d, w) -> {
+                    if (finalOtherId == null || finalOtherId.isEmpty()) {
+                        Toast.makeText(getContext(),
+                                "Could not identify the other party",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    AgrofastRepository repo = new AgrofastRepository(requireContext());
+                    repo.addFavourite(finalOtherId,
+                            new AgrofastRepository.DataCallback<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    if (!isAdded()) return;
+                                    Toast.makeText(getContext(),
+                                            finalOtherName + " added to favourites ❤️",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    DevLogger.logError("PendingFragment favourite", error, null);
+                                    if (!isAdded()) return;
+                                    Toast.makeText(getContext(),
+                                            DevLogger.toUserMessage(error),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                })
+                .setNegativeButton("Skip", null)
+                .show();
     }
 
     private void loadActiveOrders() {

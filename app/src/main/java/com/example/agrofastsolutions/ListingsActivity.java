@@ -105,14 +105,18 @@ public class ListingsActivity extends AppCompatActivity {
 
     private void openListingDetails(Listing listing) {
         Intent intent = new Intent(ListingsActivity.this, ListingDetailsActivity.class);
-        intent.putExtra("LISTING_ID", listing.getListingId());
-        intent.putExtra("CROP", listing.getCropType());
-        intent.putExtra("SELLER_ID", listing.getSellerId());
-        intent.putExtra("SELLER_NAME", listing.getSellerName());
-        intent.putExtra("QUANTITY", listing.getQuantityAvailable());
-        intent.putExtra("UNIT", listing.getUnit());
-        intent.putExtra("PRICE", listing.getAskingPrice());
-        intent.putExtra("LOCATION", listing.getLocation());
+        intent.putExtra("LISTING_ID",   listing.getListingId());
+        intent.putExtra("CROP",         listing.getCropType());
+        intent.putExtra("SELLER_ID",    listing.getSellerId());
+        intent.putExtra("SELLER_NAME",  listing.getSellerName());
+        intent.putExtra("QUANTITY",     listing.getQuantityAvailable());
+        intent.putExtra("UNIT",         listing.getUnit());
+        intent.putExtra("PRICE",        listing.getAskingPrice());
+        intent.putExtra("LOCATION",     listing.getLocation());
+
+        // ✅ NEW — pass the first photo URL (or empty string)
+        String photoUrl = listing.getFirstPhotoUrl();
+        intent.putExtra("PHOTO_URL", photoUrl != null ? photoUrl : "");
         startActivity(intent);
     }
 

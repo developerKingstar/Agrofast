@@ -1,60 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:orientation="vertical"
+    android:background="?android:attr/colorBackground"
+    android:padding="24dp">
 
-    <LinearLayout
-        android:id="@+id/mainLayout"
+    <TextView
+        android:id="@+id/tvCustomize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:text="Customize"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="35sp"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/tvChooseTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose theme"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/SpinnerTheme"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/agrofast_brown"
-        android:padding="24dp">
-
-        <TextView
-            android:id="@+id/tvCustomize"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Customize"
-            android:textSize="35sp"
-            android:textStyle="bold|italic"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp"/>
-
-
-        <TextView
-            android:id="@+id/tVChooseColor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose color"
-            android:textSize="25sp"
-            android:textStyle="bold"/>
-
-        <Spinner
-            android:id="@+id/SpinnerColor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"/>
-
-
-        <TextView
-            android:id="@+id/tvChooseLanguage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose language"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:layout_marginTop="25dp"/>
-
-        <Spinner
-            android:id="@+id/SpinnerLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"/>
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" />
 
 </LinearLayout>

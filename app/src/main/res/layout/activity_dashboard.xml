@@ -4,27 +4,24 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/agrofast_white"
-    >
+    android:background="?android:attr/colorBackground">
 
-    <!-- ============ 1) NORMAL SCREEN CONTENT ============ -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
 
-            <!-- Toolbar now holds BOTH the title AND the profile icon,
-                 so the icon renders inside the green bar itself. -->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/agrofast_green"
+                android:background="?attr/colorPrimary"
                 app:title="Agrofast Solutions"
-                app:titleTextColor="@android:color/white">
+                app:titleTextColor="?attr/colorOnPrimary">
 
                 <ImageView
                     android:id="@+id/iv_profile"
@@ -52,17 +49,15 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <!-- Typewriter greeting: "Good Afternoon Kingstar" -> deletes -> "What shall we do today?" -->
                 <TextView
                     android:id="@+id/tv_greeting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:text=""
-                    android:textColor="@color/agrofast_green"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
-
 
                 <TextView
                     android:id="@+id/dashboard_market_desc"
@@ -72,17 +67,16 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="10dp"
-                    android:textColor="@color/agrofast_black"
-                    />
+                    android:textColor="?android:attr/textColorPrimary" />
 
-                <!-- Live ticker: scrolling text of crop demand + prices -->
+                <!-- TICKER CARD — green / yellowish-green, text on card -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
-
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorPrimary">
 
                     <TextView
                         android:id="@+id/tv_ticker"
@@ -95,17 +89,18 @@
                         android:focusable="true"
                         android:focusableInTouchMode="true"
                         android:text="Loading market prices..."
-                        android:textColor="@color/agrofast_brown"
+                        android:textColor="?attr/colorOnPrimary"
                         android:textSize="14sp" />
                 </androidx.cardview.widget.CardView>
 
-                <!-- News feed card -->
+                <!-- NEWS CARD — green / yellowish-green -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorPrimary">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -118,7 +113,8 @@
                             android:layout_height="wrap_content"
                             android:text="Agriculture News"
                             android:textStyle="bold"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            android:textColor="?attr/colorOnPrimary" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_news"
@@ -133,9 +129,6 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- ============ 2) HAMBURGER MENU (slides in from the left) ============ -->
-    <!-- IMPORTANT: no app:menu attribute here, only the custom include.
-         If app:menu is present, NavigationView ignores this include entirely. -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="250dp"

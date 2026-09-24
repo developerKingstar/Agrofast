@@ -102,6 +102,13 @@ public class Offer {
         return "Unknown";
     }
 
+    public String getListingFirstPhotoUrl() {
+        if (listing != null && listing.photos != null && listing.photos.length > 0) {
+            return listing.photos[0];
+        }
+        return null;
+    }
+
     // ===== Setters =====
     public void setOfferId(String v)          { offerId = v; }
     public void setListingId(String v)        { listingId = v; }
@@ -118,7 +125,11 @@ public class Offer {
     public static class ListingJoin {
         @SerializedName("crop_type")
         public String cropType;
+
+        @SerializedName("photos")
+        public String[] photos;
     }
+
 
     public static class UserJoin {
         @SerializedName("user_id")

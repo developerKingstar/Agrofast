@@ -5,11 +5,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F4"
+    android:background="?android:attr/colorBackground"
     android:padding="16dp"
     tools:context=".Show_order">
 
-    <!-- 1. Horizontal Header Bar - NOW 5 TABS: Sent, Received, Orders, Completed, Declined -->
     <LinearLayout
         android:id="@+id/tabHeaderLayout"
         android:layout_width="match_parent"
@@ -27,7 +26,7 @@
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Sent"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
@@ -42,7 +41,7 @@
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Received"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
@@ -57,7 +56,7 @@
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Orders"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
@@ -72,7 +71,7 @@
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Completed"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
@@ -86,14 +85,13 @@
             android:layout_weight="1"
             android:paddingHorizontal="0dp"
             android:text="Declined"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="9sp"
             android:textStyle="bold"
             app:cornerRadius="10dp" />
 
     </LinearLayout>
 
-    <!-- 2. Search Bar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchOrderInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -102,20 +100,20 @@
         android:layout_below="@id/tabHeaderLayout"
         android:layout_marginTop="16dp"
         android:hint="Search orders, crops, or buyers..."
-        app:boxStrokeColor="#2E7D32"
-        app:hintTextColor="#2E7D32"
+        app:boxStrokeColor="?attr/colorPrimary"
+        app:hintTextColor="?attr/colorPrimary"
         app:startIconDrawable="@android:drawable/ic_menu_search"
-        app:startIconTint="#8D6E63">
+        app:startIconTint="?attr/colorPrimary">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearchOrders"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:textColor="#1B4D3E"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- 3. Dynamic Fragment Container -->
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"

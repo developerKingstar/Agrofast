@@ -6,10 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/agrofast_white"
+    android:background="?android:attr/colorBackground"
     android:fitsSystemWindows="true">
 
-    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -17,7 +16,7 @@
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:background="@color/agrofast_green">
+        android:background="?attr/colorPrimary">
 
         <ImageButton
             android:id="@+id/btnBack"
@@ -26,14 +25,14 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back"
             android:src="@android:drawable/ic_media_previous"
-            app:tint="#EAF3DE" />
+            app:tint="?attr/colorOnPrimary" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/user_guide"
-            android:textColor="#EAF3DE"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center" />
@@ -44,8 +43,6 @@
 
     </LinearLayout>
 
-
-    <!-- Guide items -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -57,7 +54,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Buy -->
             <LinearLayout
                 android:id="@+id/guideBuy"
                 android:layout_width="match_parent"
@@ -82,15 +78,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/BuyCrops"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginStart="10dp" />
 
             </LinearLayout>
 
-
-            <!-- Sell -->
             <LinearLayout
                 android:id="@+id/guideSell"
                 android:layout_width="match_parent"
@@ -115,15 +109,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/sell_harvest"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginStart="10dp" />
 
             </LinearLayout>
 
-
-            <!-- Nuisance fee -->
             <LinearLayout
                 android:id="@+id/guideFee"
                 android:layout_width="match_parent"
@@ -148,15 +140,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/nuisance"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginStart="10dp" />
 
             </LinearLayout>
 
-
-            <!-- Ratings -->
             <LinearLayout
                 android:id="@+id/guideRatings"
                 android:layout_width="match_parent"
@@ -182,7 +172,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:text="@string/ratings"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 

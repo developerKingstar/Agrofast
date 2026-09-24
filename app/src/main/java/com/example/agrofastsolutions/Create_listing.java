@@ -26,6 +26,7 @@ import com.example.agrofastsolutions.util.DevLogger;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,19 +46,31 @@ public class Create_listing extends AppCompatActivity {
     private Uri cameraImageUri;
     private AgrofastRepository repository;
 
+    // ===== Pending image state =====
+    private byte[] pendingImageBytes = null;   // raw bytes of the chosen image
+    private String pendingImageExt   = "jpg";  // file extension
+
+    // ==========================================
+    // GALLERY PICKER
+    // ==========================================
     private final ActivityResultLauncher<String> galleryLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri != null) {
-                    displaySelectedImage(uri);
-                    Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
+                    if (loadImageFromUri(uri, "jpg")) {
+                        Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
+    // ==========================================
+    // CAMERA CAPTURE
+    // ==========================================
     private final ActivityResultLauncher<Uri> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
                 if (success && cameraImageUri != null) {
-                    displaySelectedImage(cameraImageUri);
-                    Toast.makeText(this, "Photo captured", Toast.LENGTH_SHORT).show();
+                    if (loadImageFromUri(cameraImageUri, "jpg")) {
+                        Toast.makeText(this, "Photo captured", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -90,6 +103,12 @@ public class Create_listing extends AppCompatActivity {
         });
     }
 
+    // ==========================================
+    // SUBMIT FLOW
+    //   Step 1: validate inputs
+    //   Step 2: if pending image → upload it → get URL
+    //   Step 3: create listing with (or without) URL
+    // ==========================================
     private void attemptSubmitListing() {
         String crop      = textOf(etCropName);
         String qtyStr    = textOf(etQuantity);
@@ -113,9 +132,48 @@ public class Create_listing extends AppCompatActivity {
 
         if (location.isEmpty()) { etLocation.setError("Please enter a location"); etLocation.requestFocus(); return; }
 
-        showLoading(true);
+        // ===== No image → straight to create =====
+        if (pendingImageBytes == null) {
+            createListingWithPhoto(crop, quantity, price, location, null);
+            return;
+        }
 
-        repository.createListing(crop, quantity, price, location,
+        // ===== Image exists → upload first, then create =====
+        showUploading(true);
+
+        final byte[] bytesToUpload = pendingImageBytes;
+        final String extToUse      = pendingImageExt;
+
+        repository.uploadListingPhoto(bytesToUpload, extToUse,
+                new AgrofastRepository.DataCallback<String>() {
+                    @Override
+                    public void onSuccess(String photoUrl) {
+                        // Now create the listing with the returned URL
+                        createListingWithPhoto(crop, quantity, price, location, photoUrl);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        showUploading(false);
+                        DevLogger.logError("Create_listing upload", error, null);
+                        Toast.makeText(Create_listing.this,
+                                "Photo upload failed: " + DevLogger.toUserMessage(error),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void createListingWithPhoto(String crop, double quantity, double price,
+                                        String location, String photoUrl) {
+
+        // After upload, progress bar is already visible — just change the label
+        if (photoUrl != null) {
+            showPublishing(true);
+        } else {
+            showLoading(true);
+        }
+
+        repository.createListing(crop, quantity, price, location, photoUrl,
                 new AgrofastRepository.DataCallback<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -129,15 +187,76 @@ public class Create_listing extends AppCompatActivity {
                     @Override
                     public void onError(String error) {
                         showLoading(false);
-
                         DevLogger.logError("Create_listing submit", error, null);
-
                         Toast.makeText(Create_listing.this,
                                 DevLogger.toUserMessage(error), Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
+    // ==========================================
+    // IMAGE LOADING — reads bytes from URI, holds them
+    // ==========================================
+    private boolean loadImageFromUri(Uri uri, String extension) {
+        try {
+            byte[] bytes = readBytesFromUri(uri);
+            if (bytes == null || bytes.length == 0) {
+                Toast.makeText(this, "Could not read that image.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            // Hold for upload at submit time
+            pendingImageBytes = bytes;
+            pendingImageExt   = extension;
+
+            // Show preview
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            if (bitmap != null) {
+                imgCropPicture.setImageBitmap(bitmap);
+                layoutUploadPlaceholder.setVisibility(View.GONE);
+                imgCropPicture.setVisibility(View.VISIBLE);
+            }
+
+            return true;
+        } catch (Exception e) {
+            DevLogger.logError("Create_listing image load", e.getMessage(), e);
+            Toast.makeText(this, "Could not load that image.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+    private byte[] readBytesFromUri(Uri uri) throws IOException {
+
+        // API 28+ → use ImageDecoder for correct orientation handling
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            try {
+                ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver(), uri);
+                Bitmap bitmap = ImageDecoder.decodeBitmap(source);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, bos);
+                return bos.toByteArray();
+            } catch (Exception e) {
+                DevLogger.logError("Create_listing ImageDecoder", e.getMessage(), e);
+                // fall through to stream read
+            }
+        }
+
+        // Fallback: raw stream read
+        try (InputStream is = getContentResolver().openInputStream(uri)) {
+            if (is == null) return null;
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[8192];
+            int len;
+            while ((len = is.read(buffer)) != -1) {
+                bos.write(buffer, 0, len);
+            }
+            return bos.toByteArray();
+        }
+    }
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
     private String textOf(TextInputEditText et) {
         return et.getText() == null ? "" : et.getText().toString().trim();
     }
@@ -148,6 +267,13 @@ public class Create_listing extends AppCompatActivity {
         etPrice.setText("");
         etLocation.setText("");
         etDescription.setText("");
+
+        // Reset image state
+        pendingImageBytes = null;
+        pendingImageExt   = "jpg";
+        imgCropPicture.setImageDrawable(null);
+        imgCropPicture.setVisibility(View.GONE);
+        layoutUploadPlaceholder.setVisibility(View.VISIBLE);
     }
 
     private void showLoading(boolean loading) {
@@ -155,32 +281,19 @@ public class Create_listing extends AppCompatActivity {
         btnSubmit.setText(loading ? "Publishing..." : "Publish Listing");
     }
 
-    private void displaySelectedImage(Uri uri) {
-        try {
-            Bitmap bitmap;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver(), uri);
-                bitmap = ImageDecoder.decodeBitmap(source);
-            } else {
-                InputStream inputStream = getContentResolver().openInputStream(uri);
-                bitmap = BitmapFactory.decodeStream(inputStream);
-                if (inputStream != null) inputStream.close();
-            }
-
-            if (bitmap != null) {
-                imgCropPicture.setImageBitmap(bitmap);
-                layoutUploadPlaceholder.setVisibility(View.GONE);
-                imgCropPicture.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(this, "Unsupported image format", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            DevLogger.logError("Create_listing image decode", e.getMessage(), e);
-            Toast.makeText(this, "Could not load that image.", Toast.LENGTH_SHORT).show();
-        }
+    private void showUploading(boolean uploading) {
+        btnSubmit.setEnabled(!uploading);
+        btnSubmit.setText(uploading ? "Uploading photo..." : "Publish Listing");
     }
 
+    private void showPublishing(boolean publishing) {
+        btnSubmit.setEnabled(!publishing);
+        btnSubmit.setText(publishing ? "Publishing..." : "Publish Listing");
+    }
+
+    // ==========================================
+    // IMAGE PICKER
+    // ==========================================
     private void showImagePickerDialog() {
         String[] options = {"Choose from Gallery", "Take a Photo"};
         new AlertDialog.Builder(this)

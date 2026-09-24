@@ -1,13 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.AGROFASTASOLUTIONS" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-            <!-- Light mode color -->
+    <style name="Base.Theme.AgrofastSolutions" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- ===== BACKGROUNDS ===== -->
+        <item name="android:colorBackground">@color/agrofast_white</item>
+        <item name="colorSurface">@color/agrofast_white</item>
+        <item name="colorOnBackground">@color/agrofast_black</item>
+        <item name="colorOnSurface">@color/agrofast_black</item>
+
+        <!-- ===== PRIMARY — GREEN ===== -->
+        <item name="colorPrimary">@color/agrofast_green</item>
+        <item name="colorOnPrimary">@color/agrofast_white</item>
+        <item name="colorPrimaryContainer">@color/agrofast_green</item>
+        <item name="colorOnPrimaryContainer">@color/agrofast_white</item>
+        <item name="colorPrimaryVariant">@color/agrofast_green</item>
+
+        <item name="colorSecondary">@color/agrofast_dark_green</item>
+        <item name="colorOnSecondary">@color/agrofast_white</item>
+
+        <!-- ===== STATUS BAR ===== -->
+        <item name="android:statusBarColor">@color/agrofast_dark_green</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- ===== CARDS — GREEN with white text ===== -->
         <item name="CardBackgroundColor">@color/agrofast_green</item>
         <item name="CardStrokeColor">@color/agrofast_green</item>
-
     </style>
 
-    <style name="Theme.AGROFASTASOLUTIONS" parent="Base.Theme.AGROFASTASOLUTIONS" />
+    <style name="Theme.AgrofastSolutions" parent="Base.Theme.AgrofastSolutions" />
 </resources>

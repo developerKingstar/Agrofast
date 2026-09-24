@@ -58,7 +58,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 setSubmitting(false);
                 tvStatus.setText("Reset link sent! Check your inbox (and spam folder). " +
                         "The link opens in a browser.");
-                tvStatus.setTextColor(0xFF2E7D32);
+                // Success
+                tvStatus.setTextColor(androidx.core.content.ContextCompat.getColor(
+                        ForgotPasswordActivity.this,
+                        com.google.android.material.R.color.design_default_color_primary));
+
+                // Or simpler — just remove the setTextColor lines entirely.
+                // The theme's default text color is already readable.
                 tvStatus.setVisibility(View.VISIBLE);
                 etEmail.setText("");
             }
@@ -67,7 +73,12 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onError(String error) {
                 setSubmitting(false);
                 tvStatus.setText(error);
-                tvStatus.setTextColor(0xFFB71C1C);
+                // Success
+                tvStatus.setTextColor(androidx.core.content.ContextCompat.getColor(
+                        ForgotPasswordActivity.this,
+                        com.google.android.material.R.color.design_default_color_primary));
+                // Or simpler — just remove the setTextColor lines entirely.
+                // The theme's default text color is already readable.
                 tvStatus.setVisibility(View.VISIBLE);
             }
         });

@@ -6,10 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/agrofast_white"
+    android:background="?android:attr/colorBackground"
     android:fitsSystemWindows="true">
 
-    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -17,7 +16,7 @@
         android:gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:background="@color/agrofast_green">
+        android:background="?attr/colorPrimary">
 
         <ImageButton
             android:id="@+id/btnBack"
@@ -26,7 +25,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/back_"
             android:src="@android:drawable/ic_media_previous"
-            app:tint="#EAF3DE" />
+            app:tint="?attr/colorOnPrimary" />
 
         <TextView
             android:id="@+id/txtGuideTitle"
@@ -34,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/user_guide"
-            android:textColor="#EAF3DE"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="19sp"
             android:textStyle="bold"
             android:gravity="center" />
@@ -44,7 +43,6 @@
             android:layout_height="48dp" />
 
     </LinearLayout>
-
 
     <ScrollView
         android:layout_width="match_parent"
@@ -63,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:text="User Guide menu"
                 android:gravity="center"
-                android:textColor="@color/agrofast_black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:lineSpacingExtra="6dp" />
 

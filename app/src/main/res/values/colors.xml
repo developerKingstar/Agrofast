@@ -8,6 +8,6 @@
     <color name="agrofast_orange">#F9A825</color>
     <color name="black">#000000</color>
     <color name="agrofast_yellowish_green">#96cc00</color>
-
+    <color name="news_placeholder_text">#FFFFFF</color>
 
 </resources>
